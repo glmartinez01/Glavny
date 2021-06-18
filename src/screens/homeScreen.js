@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import {Text,Header} from "react-native-elements";
@@ -6,6 +6,7 @@ import getEnvVars from "../../environment";
 import {backend} from "../api/backend";
 import Carousel from '../components/Carousel';
 import Box from '../components/Box';
+import { Context as AuthContext } from "../context/AuthContext";
 
 const {apiKeyS} = getEnvVars();
 const { width, height } = Dimensions.get('window')
@@ -13,6 +14,7 @@ const { width, height } = Dimensions.get('window')
 const homeScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
+    const { state, signout } = useContext(AuthContext);
 
     const fetchRecipes = async () => {
         const data = await backend.get(`?apiKey=${apiKeyS}&number=5`);
@@ -39,7 +41,7 @@ const homeScreen = ({navigation}) =>{
             statusBarProps={{backgroundColor:"#fabd05"}}
             containerStyle={{backgroundColor:"#fabd05"}}
             centerComponent={{ text: 'Glavny', style: { color: '#fff',fontWeight:'bold',fontSize:20 } }}
-            rightComponent={<AntDesign name="user" size={30} color="white" />}
+            rightComponent={<AntDesign name="user" size={30} color="white" onPress={()=>{signout()}} />}
             />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.section}>
