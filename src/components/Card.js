@@ -1,14 +1,29 @@
 import React from "react";
-import {StyleSheet,View,Text,ScrollView } from "react-native";
+import {StyleSheet,Image,TouchableOpacity,View,Dimensions } from "react-native";
+import {Text} from "react-native-elements";
 // import {ScrollView} from "react-native-gesture-handler";
 
-function Card(props){
+const {width,height} = Dimensions.get("window");
+
+function Card({item,onPress}){
   return(
-    <View style={styles.card}>
-        <View style ={styles.cardContent}>
-            {props.children}
-        </View>
-    </View>
+    
+        <TouchableOpacity
+            style={styles.container}
+            onPress={onPress}
+        >
+            <Image  source={{uri:item.imagen}}
+                    resizeMode="cover"
+                    style={styles.img}
+                    />
+            <View style={styles.details}>
+                <Text h4 style={{flex:1}}>{item.titulo}</Text>
+                <Text style={{color:"#aaa",fontStyle:"italic"}}>Autor: {item.publicado_por}</Text>
+            </View>
+        
+        </TouchableOpacity>
+
+
   );
 }
 
@@ -16,27 +31,21 @@ function Card(props){
 
 const styles = StyleSheet.create({
 
-    card:{
-        borderRadius:6,
-        elevation:3,
-        backgroundColor:"#ffff",
-        shadowOffset:{width:1, height:1}, 
-        shadowColor: "#333",
-        shadowOpacity:0.3,
-        shadowRadius:2,
-        marginHorizontal:4,
-        marginVertical:6
-    },
-    cardContent: {
-        marginHorizontal:0,
-        marginVertical:0,
-
-    },
     container:{
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection:"row",
+        alignItems:"center",
+        padding:width*0.015,
+        borderRadius:20,
+        backgroundColor:"#fafafa",
+    },
+    img:{
+        width:100,
+        height:100,
+        borderRadius:20
+    },
+    details:{
+        width:"68%",
+        paddingHorizontal:20
     }
     
 });

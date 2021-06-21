@@ -45,15 +45,12 @@ const homeScreen = ({navigation}) =>{
             />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.section}>
-                    <Text h3 style={{marginLeft:width*0.03}}>Deberias Probar...</Text>
+                    <Text h4 style={{marginLeft:width*0.03}}>Hola, {state.user.name} Deberias Probar...</Text>
                     <Carousel data={recipes} navigation={navigation}/>
                 </View>
-                <View style={[styles.section,{alignItems:'center'}]}>
-                    <Text h3>Recientemente Publicadas</Text>
-                    <View style={{flexDirection:'row'}}>
-                        <Box title={"Receta 1"} backgroundClr={'#fabd05'}/>
-                        <Box title={"Receta 2"} backgroundClr={'#fabd05'}/>
-                    </View>
+                <View style={[styles.section]}>
+                    <Text h4 style={{marginLeft:width*0.03}}>Recientemente Publicadas</Text>
+                    
                 </View>
             </ScrollView>
         </View>
