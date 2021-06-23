@@ -49,7 +49,7 @@ const loginScreen = () =>{
                 <Text style={styles.loginText}>LOGIN</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text style={styles.loginText}>¿No tienes una cuenta? Registrate</Text>
+                <Text style={styles.loginText}>¿No tienes una cuenta? Registrate.</Text>
             </TouchableOpacity>
         </View>
 

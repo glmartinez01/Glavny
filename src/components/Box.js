@@ -21,9 +21,10 @@ const Box = ({title, image, accion, style,backgroundClr }) => {
 
 const styles = StyleSheet.create({
   caja:{
-    height: height*0.20,
-    width: width*0.45,
-    margin:5,
+    height: height*0.14,
+    width: width*0.32,
+    margin:10,
+    marginRight:5,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -66,10 +67,10 @@ const styles = StyleSheet.create({
     fontWeight:"bold"
   },
   img:{
-    width: "70%",
-    height: "70%",
+    width: "100%",
+    height: "100%",
     borderRadius:10,
-    resizeMode:"contain",
+
   }
 });
 

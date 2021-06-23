@@ -14,7 +14,7 @@ const userRecipesScreen = () =>{
 
     const newGet = async() =>{
         const newrecipes = await getRecipes();
-        console.log(newrecipes);
+        //console.log(newrecipes);
         setRecipes(newrecipes);
     }
 
@@ -47,7 +47,7 @@ const userRecipesScreen = () =>{
                     
                 />
             </View>
-            <TextInput style={{marginLeft:20}}/>
+            
             <FlatList
                 data={recipes}
                 keyExtractor={(item)=>item.id}
@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
         borderRadius:20,
         height:height*0.065,
         justifyContent:"center",
-        padding:20
+        padding:20,
+        marginBottom:10
     },
     inputText:{
         height:50,

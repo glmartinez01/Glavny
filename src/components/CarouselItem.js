@@ -8,7 +8,7 @@ const { width, height } = Dimensions.get('window')
 const CarouselItem = ({ item,navigation }) => {
     return (
         <View style={styles.cardView}>
-            <TouchableOpacity onPress={()=>{navigation.navigate("recipe",{id:item.id})}}>
+            <TouchableOpacity onPress={()=>{navigation.navigate("recipe",{currentRecipe:item})}}>
                 <Image style={styles.image} source={{ uri: item.image }} />
             </TouchableOpacity>
             <View style={styles.textView}>

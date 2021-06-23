@@ -13,7 +13,7 @@ export default class FabButton extends Component {
         Animated.spring(this.animation,{
             toValue,
             friction:5,
-            useNativeDriver:false
+            useNativeDriver:true
         }).start();
 
         this.open = !this.open;

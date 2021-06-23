@@ -14,6 +14,18 @@ export async function getRecipes(){
     return recipesList;
 }
 
+export async function getRecipesbyId(id){
+  const recipesList = [];
+  const recipes = await firebase.firestore().collection("recetas").where("userID","==",id).get();
+
+  recipes.forEach((doc)=>{
+    const recpItem = doc.data();
+    recipesList.push(recpItem);
+  })
+
+  return recipesList;
+}
+
 export function addRecipe(recipe){
     const createdAt = firebase.firestore.FieldValue.serverTimestamp();
     const recipesRef = firebase.firestore().collection("recetas");

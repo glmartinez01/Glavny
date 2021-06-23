@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useContext} from 'react';
-import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions } from 'react-native';
+import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions,AsyncStorage } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import {Text,Header} from "react-native-elements";
 import getEnvVars from "../../environment";
@@ -17,8 +17,15 @@ const homeScreen = ({navigation}) =>{
     const { state, signout } = useContext(AuthContext);
 
     const fetchRecipes = async () => {
-        const data = await backend.get(`?apiKey=${apiKeyS}&number=5`);
-        setRecipes(data.data.results);
+        const recipesArray = await AsyncStorage.getItem(`recipesArray`);
+        if(recipesArray == null){
+            const data = await backend.get(`?apiKey=${apiKeyS}&number=5`);
+            await AsyncStorage.setItem("recipesArray",JSON.stringify(data.data.results));
+            setRecipes(data.data.results);
+        }else{
+            setRecipes(JSON.parse(recipesArray));
+            //console.log(JSON.parse(recipesArray));
+        }  
     };
 
     useEffect(()=>{
@@ -64,7 +71,7 @@ const styles = StyleSheet.create({
         justifyContent:"center"
     },
     section:{
-       marginTop:height*0.05
+       marginTop:height*0.02
     },
     sectionFun:{
         height:height*0.46,
