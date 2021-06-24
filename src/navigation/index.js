@@ -4,6 +4,7 @@ import recipeScreen from "../screens/recipeScreen";
 import userRecipesScreen from "../screens/usersRecipesScreen";
 import myRecipesScreen from "../screens/myRecipesScreen";
 import addRecipeScreen from "../screens/addRecipesScreen";
+import recipeInstructionsScreen from "../screens/recipeInstructionsScreen";
 import loginScreen from "../screens/loginScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -27,6 +28,10 @@ function HomeStack(){
         <Stack.Screen 
         name="recipe"
         component={recipeScreen}
+        options={{headerShown:false}}/>
+        <Stack.Screen 
+        name="recipeinstructions"
+        component={recipeInstructionsScreen}
         options={{headerShown:false}}/>
       </Stack.Navigator>
     )

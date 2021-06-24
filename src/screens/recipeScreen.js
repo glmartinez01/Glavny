@@ -1,9 +1,10 @@
 import React,{useState,useEffect, useRef} from 'react';
 import {View,Animated,Image,TouchableOpacity,StatusBar,ActivityIndicator,FlatList,AsyncStorage} from "react-native";
 import { Text } from 'react-native-elements';
-import getEnvVars from "../../environment";
 import CreatorCard from '../components/CreatorCard';
 import Icon from "react-native-vector-icons/FontAwesome";
+import getEnvVars from "../../environment";
+import { Linking } from 'react-native';
 
 
 const {apiKeyS} = getEnvVars();
@@ -31,6 +32,15 @@ const recipeScreen = ({navigation,route}) =>{
         }
         
     };
+
+    const navigationlink = () =>{
+        if(recipeInfo.analyzedInstructions.length > 0 ){
+            navigation.navigate("recipeinstructions",{currentRecipe:currentRecipe,recipeInfo:recipeInfo})
+            //console.log(recipeInfo.analyzedInstructions);
+        }else{
+            Linking.openURL(recipeInfo.sourceUrl);
+        }
+    }
 
     // const fetchInstructions = async () =>{
     //     const endpoint = `https://api.spoonacular.com/recipes/${currentRecipe.id}/analyzedInstructions?apiKey=${apiKeyS}`;
@@ -73,7 +83,7 @@ const recipeScreen = ({navigation,route}) =>{
                                                 })
                                             }
                                         ]}}>
-                    <CreatorCard name={recipeInfo.creditsText}/>
+                    <CreatorCard name={recipeInfo.creditsText} navigation={navigationlink}/>
                 </Animated.View>
             </View>
         )
