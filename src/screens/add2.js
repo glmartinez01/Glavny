@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TouchableOpacity,Modal } from "react-native";
-import { View,StyleSheet,Text,TextInput,FlatList } from "react-native";
+import { View,StyleSheet,Text,TextInput,FlatList,ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Swipeable } from "react-native-gesture-handler";
 
@@ -38,22 +38,27 @@ const addrecipe = () =>{
     };
 
     const addIngredient = ()=> {
+        let lastid = 0
+        for( var i = 0; i < arrayingredients.length; i++){ 
+            lastid = arrayingredients[i].id;
+        }
+        
         const item = {
-            id:arrayingredients.length+1,
+            id:lastid+1,
             name:ingredient,
             quantity:quantity
         };
         arrayingredients.push(item);
 
         // setIngredients(arrayingredients);
-        //console.log(arrayingredients);
+        console.log(arrayingredients);
         setOpen(false);
     };
 
     
 
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={{height:300,backgroundColor:"#fabd05"}}/>
             {/* Overview */}
             <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>OVERVIEW</Text>
@@ -124,7 +129,7 @@ const addrecipe = () =>{
                     </View>
                 </View>
             </Modal>
-        </View>
+        </ScrollView>
     )
 }
 
