@@ -2,7 +2,16 @@ import React, { useState } from "react";
 import { TouchableOpacity,Modal } from "react-native";
 import { View,StyleSheet,Text,TextInput,FlatList } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Swipeable } from "react-native-gesture-handler";
 
+const RenderRight = (progress,dragX) =>{
+    return(
+        <View style={{flexDirection:"row",height:50,width:"30%",backgroundColor:"#EA4235",alignItems:"center",justifyContent:"center"}}>
+            <Text style={{color:"#fff",fontWeight:"600"}}>Borrar </Text>
+            <Icon name="trash" color="#fff" size={15}/>
+        </View>
+    )
+}
 
 const addrecipe = () =>{
     const [arrayingredients,setArrayIngredients] = useState([]);
@@ -14,17 +23,18 @@ const addrecipe = () =>{
         setOpen(true)
     }
 
+    
     function removeIngredient(item){
-        console.log(item);
-        // if(arrayingredients.includes(item)){
-        //     for( var i = 0; i < arrayingredients.length; i++){ 
-      
-        //       if ( arrayingredients[i].id === item.id) { 
-      
-        //           arrayingredients.splice(i, 1); 
-        //       }
-        //     }
-        //   }
+        let x = null;
+        if(arrayingredients.includes(item)){
+            for( var i = 0; i < arrayingredients.length; i++){ 
+
+              if ( arrayingredients[i].id === item.id) { 
+                   x = arrayingredients.filter(items=> items !== item)
+              }
+            }
+        }
+        setArrayIngredients(x);
     };
 
     const addIngredient = ()=> {
@@ -64,19 +74,16 @@ const addrecipe = () =>{
             <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>INGREDIENTS</Text>
             <View style={styles.section}>
                 {arrayingredients.map((element,key)=>(
-                        <View style={styles.card} key={key}>
-                            <TouchableOpacity onPress={removeIngredient(element)}>
-                                <View style={{alignItems:'center',justifyContent:'center',height:50,width:50}}>
-                                    <Icon name="minus" size={15} color="red"/>
-                                </View>
-                            </TouchableOpacity>
+                        <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeIngredient(element)}} renderRightActions={RenderRight} key={key}>
+                            <View style={styles.card} >
                             <View style={{flex:1,justifyContent:'center'}}>
                                 <Text style={{fontSize:16}}>{element.name}</Text>
                             </View>
                             <View style={{alignItems:'flex-end',justifyContent:'center'}}>
                                 <Text style={{fontSize:14,fontStyle:'italic',color:"#aaa"}}>{element.quantity}</Text> 
                             </View>
-                        </View>
+                            </View>
+                        </Swipeable>
                     )
 
                 )}
