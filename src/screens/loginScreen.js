@@ -29,7 +29,7 @@ const loginScreen = () =>{
             </View>
             <View style={styles.inputView}>
                 <TextInput  
-                    style={styles.inputText}
+                    style={[styles.inputText,{paddingRight:"15%"}]}
                     placeholder="Password..." 
                     placeholderTextColor="#003f5c"
                     secureTextEntry={hidePass}
@@ -49,7 +49,7 @@ const loginScreen = () =>{
                 <Text style={styles.loginText}>LOGIN</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text style={styles.loginText}>¿No tienes una cuenta? Registrate.</Text>
+                <Text style={styles.signupText}>¿No tienes una cuenta? Registrate.</Text>
             </TouchableOpacity>
         </View>
 
@@ -65,18 +65,19 @@ const styles = StyleSheet.create({
     },
     logo:{
         fontWeight:"bold",
-        fontSize:50,
+        fontSize:width*0.075,
         color:"white",
-        marginBottom:40
+        marginBottom:height*0.03
     },
     inputView:{
         width:"80%",
         backgroundColor:"#FDE59B",
-        borderRadius:25,
-        height:50,
-        marginBottom:20,
+        borderRadius:width*0.5,
+        height: height*0.07,
+        width: width*0.7,
+        marginBottom:height*0.015,
         justifyContent:"center",
-        padding:20
+        padding:height*0.02
     },
     passwordIcon: {
         position:"absolute",
@@ -84,26 +85,30 @@ const styles = StyleSheet.create({
         right:width*0.05,
     },
     inputText:{
-        height:50,
+        fontSize: width*0.04,
         color:"black"
     },
     forgot:{
         color:"white",
-        fontSize:15
+        fontSize:width*0.035
     },
     loginBtn:{
-        width:"80%",
+        width:width*0.7,
+        height: height*0.06,
         backgroundColor:"#fb5b5a",
-        borderRadius:25,
-        height:50,
+        borderRadius:width*0.5,
         alignItems:"center",
         justifyContent:"center",
-        marginTop:40,
-        marginBottom:10
+        marginTop:height*0.04,
+        marginBottom:height*0.01
     },
     loginText:{
         color:"white",
-        fontSize:15
+        fontSize: width*0.04,
+    },
+    signupText:{
+        color:"white",
+        fontSize:width*0.035
     }
 })
 
