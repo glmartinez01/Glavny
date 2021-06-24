@@ -4,6 +4,7 @@ import recipeScreen from "../screens/recipeScreen";
 import userRecipesScreen from "../screens/usersRecipesScreen";
 import myRecipesScreen from "../screens/myRecipesScreen";
 import addRecipeScreen from "../screens/addRecipesScreen";
+import addrecipe from "../screens/add2";
 import recipeInstructionsScreen from "../screens/recipeInstructionsScreen";
 import loginScreen from "../screens/loginScreen";
 import { NavigationContainer } from "@react-navigation/native";
@@ -46,7 +47,7 @@ function myRecipesStack(){
       options={{headerShown:false}}/>
       <Stack.Screen 
       name="addrecipe"
-      component={addRecipeScreen}
+      component={addrecipe}
       options={{headerShown:false}}/>
     </Stack.Navigator>
   )
