@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { TouchableOpacity,Modal } from "react-native";
-import { View,StyleSheet,Text,TextInput,FlatList,ScrollView } from "react-native";
+import { View,StyleSheet,Text,TextInput,FlatList,ScrollView,Dimensions,Image} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Ionicons } from "@expo/vector-icons";
 import { Swipeable } from "react-native-gesture-handler";
+import * as Permissions from "expo-permissions";
+import { Camera, FlashMode } from 'expo-camera';
+import { Header } from "react-native-elements";
+
+const {width, height} = Dimensions.get("window")
 
 const RenderRight = (progress,dragX) =>{
     return(
@@ -13,28 +19,39 @@ const RenderRight = (progress,dragX) =>{
     )
 }
 
-const addrecipe = () =>{
+const addrecipe = ({navigation}) =>{
     const [arrayingredients,setArrayIngredients] = useState([]);
     const [quantity,setQuantity] = useState("")
     const [ingredient,setIngredient] = useState("");
     const [open,setOpen] = useState(false);
+    const [image,setImage] = useState("");
 
     const openModal = () =>{
         setOpen(true)
+    }
+
+    const onImageChange=({image})=>{
+        setImage(image);
     }
 
     
     function removeIngredient(item){
         let x = null;
         if(arrayingredients.includes(item)){
-            for( var i = 0; i < arrayingredients.length; i++){ 
+            // for( var i = 0; i < arrayingredients.length; i++){ 
 
-              if ( arrayingredients[i].id === item.id) { 
-                   x = arrayingredients.filter(items=> items !== item)
-              }
-            }
+            //   if ( arrayingredients[i].id === item.id) { 
+            //        x = arrayingredients.filter(items=> items !== item)
+            //   }
+            // }
+            x = arrayingredients.filter(items=> items !== item)
         }
         setArrayIngredients(x);
+
+        for( var i = 0; i < arrayingredients.length; i++){ 
+           arrayingredients[i].id = i+1;
+        }
+        console.log(arrayingredients);
     };
 
     const addIngredient = ()=> {
@@ -51,7 +68,7 @@ const addrecipe = () =>{
         arrayingredients.push(item);
 
         // setIngredients(arrayingredients);
-        console.log(arrayingredients);
+       // console.log(arrayingredients);
         setOpen(false);
     };
 
@@ -59,7 +76,12 @@ const addrecipe = () =>{
 
     return(
         <ScrollView style={styles.container}>
-            <View style={{height:300,backgroundColor:"#fabd05"}}/>
+            
+            <View style={{height:300,backgroundColor:"#fabd05",alignItems:"center",justifyContent:"center"}}>
+                {image ? <Image resizeMode="cover" style={{height:300,width:"100%"}} source={{uri:image}}/> :null}
+                <Icon name="camera" size={24} onPress={()=>{navigation.navigate("camera",{onImageChange})}} color="white" style={{position:"absolute"}}/>  
+            </View>
+            <Ionicons name="arrow-back" size={width*0.09} color="white" onPress={() => {navigation.pop()}} style={{position:"absolute", left:'3%', top:'5%'}}/>
             {/* Overview */}
             <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>OVERVIEW</Text>
             <View style={styles.section}>
@@ -81,12 +103,12 @@ const addrecipe = () =>{
                 {arrayingredients.map((element,key)=>(
                         <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeIngredient(element)}} renderRightActions={RenderRight} key={key}>
                             <View style={styles.card} >
-                            <View style={{flex:1,justifyContent:'center'}}>
-                                <Text style={{fontSize:16}}>{element.name}</Text>
-                            </View>
-                            <View style={{alignItems:'flex-end',justifyContent:'center'}}>
-                                <Text style={{fontSize:14,fontStyle:'italic',color:"#aaa"}}>{element.quantity}</Text> 
-                            </View>
+                                <View style={{flex:1,justifyContent:'center'}}>
+                                    <Text style={{fontSize:16}}>{element.name}</Text>
+                                </View>
+                                <View style={{alignItems:'flex-end',justifyContent:'center'}}>
+                                    <Text style={{fontSize:14,fontStyle:'italic',color:"#aaa"}}>{element.quantity}</Text> 
+                                </View>
                             </View>
                         </Swipeable>
                     )

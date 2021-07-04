@@ -39,3 +39,42 @@ export function addRecipe(recipe){
           console.log(error);
         });
 }
+
+export function uploadImage(uri) {
+
+  const url = null;
+
+  if (uri) {
+    const fileName = uri.substring(uri.lastIndexOf("/")+1);
+
+    var storageRef = firebase.storage().ref(`recetas/${fileName}`);
+
+    storageRef.putFile(uri)
+      .on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        snapshot => {
+          console.log("snapshot: " + snapshot.state);
+          console.log("progress: " + (snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+
+          if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+            console.log("Success");
+          }
+        },
+        error => {
+         // unsubscribe();
+          console.log("image upload error: " + error.toString());
+        },
+        () => {
+          storageRef.getDownloadURL()
+            .then((downloadUrl) => {
+              console.log("File available at: " + downloadUrl);
+              url = downloadUrl;
+            })
+        }
+      )
+  } else {
+    console.log("Skipping image upload");
+  }
+
+  return url;
+}

@@ -13,6 +13,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Context as AuthContext } from "../context/AuthContext";
 import * as SplashScreen from "expo-splash-screen";
+import CameraScreen from "../screens/cameraScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,6 +66,19 @@ function MyTabs(){
     )
 }
 
+function finalStack(){
+  return(
+  
+    <Stack.Navigator>
+      <Stack.Screen name="hometabs" component={MyTabs} options={{headerShown:false}}/>
+      <Stack.Screen 
+      name="camera"
+      component={CameraScreen}
+      options={{headerShown:false}}/>
+    </Stack.Navigator>
+  )
+}
+
 const Navigation = ()=>{
     const { state, persistLogin } = useContext(AuthContext);
 
@@ -99,7 +113,7 @@ const Navigation = ()=>{
                 <Stack.Navigator>
                   <Stack.Screen 
                       name="App"
-                      component={MyTabs}
+                      component={finalStack}
                       options={{
                       animationEnabled: false,
                       headerShown: false
