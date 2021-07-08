@@ -1,9 +1,20 @@
 import { firebase } from "../firebase";
+import createDataContext from "./createDataContext";
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "uploading":
+      return { ...state, uploading: action.payload };
+    case "uploaded":
+      return{...state,uploaded: action.payload};
+    default:
+      return state;
+  }
+};
 
-export async function getRecipes(){
+const getRecipes = (dispatch) => async() =>{
     const recipesList = [];
-    const recipes = await firebase.firestore().collection("recetas").get();
+    const recipes = await firebase.firestore().collection("recetas").orderBy("fecha","desc").limit(5).get();
 
     recipes.forEach((doc)=>{
       const recpItem = doc.data();
@@ -14,7 +25,7 @@ export async function getRecipes(){
     return recipesList;
 }
 
-export async function getRecipesbyId(id){
+const getRecipesbyId = (dispatch) => async(id) =>{
   const recipesList = [];
   const recipes = await firebase.firestore().collection("recetas").where("userID","==",id).get();
 
@@ -26,24 +37,31 @@ export async function getRecipesbyId(id){
   return recipesList;
 }
 
-export function addRecipe(recipe){
+function addRecipe(recipe){
     const createdAt = firebase.firestore.FieldValue.serverTimestamp();
     recipe.fecha = createdAt;
     const recipesRef = firebase.firestore().collection("recetas");
     recipesRef
         .doc(recipe.id)
         .set(recipe)
-        .then((snapshot) => {
-          console.log(snapshot);
+        .then(() => {
+          dispatch({type:"uploading",payload:false})
+          dispatch({type:"uploaded",payload:true}) 
         })
         .catch((error) => {
           console.log(error);
         });
 }
 
-export async function uploadRecipe(uri,recipe) {
+const setUpload = (dispatch) => async(current) =>{
+    dispatch({type:"uploaded",payload:current})
+}
+
+const uploadRecipe = (dispatch) => async(uri,recipe) =>{
 
   const url = [];
+  console.log(recipe);
+
 
   if (uri) {
 
@@ -60,15 +78,16 @@ export async function uploadRecipe(uri,recipe) {
       xhr.send(null);
     });
 
-    
+    dispatch({type:"uploading",payload:true});
+
     const fileName = uri.substring(uri.lastIndexOf("/")+1);
     const storageRef = firebase.storage().ref(`recetas/${fileName}`);
     storageRef.put(blob)
       .on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         snapshot => {
-          // console.log("snapshot: " + snapshot.state);
-          // console.log("progress: " + (snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log("snapshot: " + snapshot.state);
+          console.log("progress: " + (snapshot.bytesTransferred / snapshot.totalBytes) * 100);
 
           if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
             console.log("Success");
@@ -84,12 +103,38 @@ export async function uploadRecipe(uri,recipe) {
               console.log("File available at: " + downloadUrl);
               recipe.imagen = downloadUrl;
               blob.close();
-              addRecipe(recipe);
-            })
-        }
+              const createdAt = firebase.firestore.FieldValue.serverTimestamp();
+              recipe.fecha = createdAt;
+              const recipeRef = firebase.firestore().collection("recetas");
+              recipeRef
+                  .doc(recipe.id)
+                  .set(recipe)
+                  .then(() => {
+                    dispatch({type:"uploading",payload:false})
+                    dispatch({type:"uploaded",payload:true}) 
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+                      })
+                  }
       )
   } else {
     console.log("Skipping image upload");
   }
 
 }
+
+export const { Provider, Context } = createDataContext(
+  reducer,
+  {
+    setUpload,
+    uploadRecipe,
+    getRecipes,
+    getRecipesbyId
+  },
+  {
+    uploading:false,
+    uploaded:false
+  }
+);

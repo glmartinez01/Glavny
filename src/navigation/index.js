@@ -1,7 +1,7 @@
 import React,{useEffect,useContext} from "react";
 import homeScreen from "../screens/homeScreen";
 import recipeScreen from "../screens/recipeScreen";
-import userRecipesScreen from "../screens/usersRecipesScreen";
+import userRecipesScreen from "../screens/sinusar/usersRecipesScreen";
 import myRecipesScreen from "../screens/myRecipesScreen";
 import addRecipeScreen from "../screens/addRecipesScreen";
 import addrecipe from "../screens/add2";
@@ -59,7 +59,6 @@ function MyTabs(){
         
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeStack} options={{tabBarIcon:({color,size})=>(<Ionicons name="home-sharp" size={size} color={color} />)}} />
-            <Tab.Screen name="Publicadas" component={userRecipesScreen} options={{tabBarIcon:({color,size})=>(<Ionicons name="newspaper-outline" size={size} color={color} />)}} />
             <Tab.Screen name="Mis Recetas" component={myRecipesStack} options={{tabBarIcon:({color,size})=>(<Ionicons name="book-outline" size={size} color={color} />)}} />
         </Tab.Navigator>
         

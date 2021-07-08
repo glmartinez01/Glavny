@@ -1,8 +1,8 @@
 import React,{useEffect, useState} from "react";
-import { View,Text,FlatList,TextInput,StatusBar,StyleSheet,ActivityIndicator,Dimensions } from "react-native";
-import Card from "../components/Card";
+import { View,Text,FlatList,TextInput,StatusBar,StyleSheet,ActivityIndicator,Dimensions,RefreshControl } from "react-native";
+import Card from "../../components/Card";
 import { SearchBar } from "react-native-elements";
-import {getRecipes} from "../api/recipes";
+import {getRecipes} from "../../context/recipes";
 import Icon from "react-native-vector-icons/FontAwesome";
 const {width,height} = Dimensions.get("window");
 
@@ -11,11 +11,18 @@ const userRecipesScreen = () =>{
 
     const [recipes, setRecipes] = useState(null);
     const [search,setSearch] = useState("");
+    const [refreshing,setRefreshing] = useState(false);
 
     const newGet = async() =>{
         const newrecipes = await getRecipes();
         //console.log(newrecipes);
         setRecipes(newrecipes);
+    }
+
+    const onRefresh = () =>{
+        setRefreshing(true);
+        newGet();
+        setRefreshing(false);
     }
 
     useEffect(()=>{
@@ -51,6 +58,7 @@ const userRecipesScreen = () =>{
             <FlatList
                 data={recipes}
                 keyExtractor={(item)=>item.id}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
                 renderItem={({item}) => {
                     return(
                         <View>

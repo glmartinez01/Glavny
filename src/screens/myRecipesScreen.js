@@ -4,14 +4,18 @@ import { Text } from "react-native-elements";
 import FabButton from "../components/FabButton";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Context as AuthContext } from "../context/AuthContext";
-import { getRecipesbyId } from "../api/recipes";
+import {Context as RecipeContext} from "../context/recipes";
 import Box from "../components/Box";
 
 
 const myRecipesScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
+    const [refresh,setRefresh] = useState(false);
+    // const [update,setUpdate] = useState(false);
     const {state} = useContext(AuthContext);
+    const {getRecipesbyId} = useContext(RecipeContext);
+    
 
     const newGet = async() =>{
         const newrecipes = await getRecipesbyId(state.user.id);
@@ -19,9 +23,17 @@ const myRecipesScreen = ({navigation}) =>{
         setRecipes(newrecipes);
     }
 
-    useEffect(()=>{
-        newGet();
-    },[])
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+           newGet();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    // useEffect(()=>{
+    //     newGet();
+    // },[])
 
     if(!recipes){
         return(
@@ -53,7 +65,7 @@ const myRecipesScreen = ({navigation}) =>{
             (<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                 <Text h4 style={{textAlign:"center"}}>¡No tienes recetas agrega una usando el menu!</Text>
             </View>)}
-            <FabButton style={{bottom:80,right:60}} addRecipe={()=>{navigation.navigate('addrecipe')}}/>
+            <FabButton style={{bottom:80,right:60}} addRecipe={()=>{navigation.navigate('addrecipe',{id:state.user.id,username:state.user.name})}}/>
         </View>
     );
 }

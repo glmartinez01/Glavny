@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, FlatList, Animated } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, FlatList, Animated,RefreshControl } from 'react-native'
 import CarouselItem from './CarouselItem'
 
 
@@ -41,7 +41,7 @@ const Carousel = ({ data,navigation }) => {
         return (
             <View>
                 <FlatList data={data}
-                
+                    // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
                     keyExtractor={(item, index) => 'key' + index}
                     horizontal
                     pagingEnabled

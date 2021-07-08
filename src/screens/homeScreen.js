@@ -1,8 +1,9 @@
 import React,{useState,useEffect,useContext} from 'react';
-import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions,AsyncStorage } from 'react-native';
+import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions,AsyncStorage,FlatList,RefreshControl } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import {Text,Header} from "react-native-elements";
 import getEnvVars from "../../environment";
+import {Context as RecipeContext} from "../context/recipes";
 import {backend} from "../api/backend";
 import Carousel from '../components/Carousel';
 import Box from '../components/Box';
@@ -14,7 +15,16 @@ const { width, height } = Dimensions.get('window')
 const homeScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
+    const [refreshing,setRefreshing] = useState(false);
+    const [urecipes,setURecipes] = useState(null);
     const { state, signout } = useContext(AuthContext);
+    const {getRecipes} = useContext(RecipeContext);
+
+    const onRefresh = () =>{
+        setRefreshing(true);
+        newGet();
+        setRefreshing(false);
+    }
 
     const fetchRecipes = async () => {
         const recipesArray = await AsyncStorage.getItem(`recipesArray`);
@@ -28,13 +38,19 @@ const homeScreen = ({navigation}) =>{
         }  
     };
 
+    const newGet = async() =>{
+        const newrecipes = await getRecipes();
+        console.log(newrecipes);
+        setURecipes(newrecipes);
+    }
+
     useEffect(()=>{
 
         fetchRecipes();
-
+        newGet();
     },[])
 
-    if(!recipes){
+    if(!recipes || !urecipes){
         return(
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="blue" />
@@ -57,7 +73,20 @@ const homeScreen = ({navigation}) =>{
                 </View>
                 <View style={[styles.section]}>
                     <Text h4 style={{marginLeft:width*0.03}}>Recientemente Publicadas</Text>
-                    
+                    <FlatList
+                    data={urecipes}
+                    keyExtractor={(item)=>item.id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                        return(
+                            <View style={{flexDirection:'row'}}>
+                                <Box title={item.titulo} image={{uri:item.imagen}} backgroundClr={"#fabd05"}/>
+                            </View>
+                        )
+                        }
+                }
+            />
                 </View>
             </ScrollView>
         </View>

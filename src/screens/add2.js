@@ -1,14 +1,12 @@
-import React, { useState,useContext } from "react";
+import React, { useState,useContext, useEffect } from "react";
 import { TouchableOpacity,Modal } from "react-native";
-import { View,StyleSheet,Text,TextInput,StatusBar,ScrollView,Dimensions,Image} from "react-native";
+import { View,StyleSheet,TextInput,StatusBar,ScrollView,Dimensions,Image} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Ionicons } from "@expo/vector-icons";
 import { Swipeable } from "react-native-gesture-handler";
-import { Context as AuthContext } from "../context/AuthContext";
-import * as Permissions from "expo-permissions";
-import { Camera, FlashMode } from 'expo-camera';
-import { Header } from "react-native-elements";
-import { uploadRecipe } from "../api/recipes";
+import { Text } from "react-native-elements";
+import {Context as RecipeContext} from "../context/recipes";
+import { ActivityIndicator } from "react-native";
 
 const {width, height} = Dimensions.get("window")
 
@@ -21,7 +19,7 @@ const RenderRight = (progress,dragX) =>{
     )
 }
 
-const addrecipe = ({navigation}) =>{
+const addrecipe = ({navigation,route}) =>{
     const [arrayingredients,setArrayIngredients] = useState([]);
     const [arrayinstructions,setArrayInstructions] = useState([]);
     const [quantity,setQuantity] = useState("")
@@ -31,8 +29,19 @@ const addrecipe = ({navigation}) =>{
     const [open2,setOpen2] = useState(false);
     const [image,setImage] = useState("");
     const [titulo,setTitulo] = useState("");
+    const {username,id} = route.params
 
-    const {state} = useContext(AuthContext);
+    // const {state} = useContext(AuthContext);
+    const {state,setUpload,uploadRecipe} = useContext(RecipeContext);
+
+    useEffect(()=>{
+        if(state.uploaded){
+            navigation.goBack();
+            setUpload(false);
+            console.log("uploaded");
+        }
+    },[state])
+
 
     const openModal = () =>{
         setOpen(true)
@@ -48,7 +57,7 @@ const addrecipe = ({navigation}) =>{
 
     const handleVerify=()=>{
         if(arrayinstructions.length<1 || arrayingredients.length<1 || image == "" || titulo == ""){
-            alert("Favor ingrese todos los campos necesarios: Foto de la Receta, Titulo, Instrucciones e Ingredientes");
+            alert("Favor ingrese todos los datos necesarios: Foto de la Receta, Titulo, Instrucciones e Ingredientes");
         }else{
             handleUpload();
         }
@@ -56,17 +65,16 @@ const addrecipe = ({navigation}) =>{
 
     const handleUpload = async() =>{
         let date = new Date();
-        let id = 'recp' + date.getTime();
+        let rid = 'recp' + date.getTime();
         const recipe = {
-            id:id,
-            publicado_por:state.user.name,
+            id:rid,
+            publicado_por:username,
             titulo:titulo,
             ingredientes:arrayingredients,
             instrucciones:arrayinstructions,
-            userID:state.user.id
+            userID:id
         }
-       await uploadRecipe(image,recipe);
-       navigation.goBack();
+       uploadRecipe(image,recipe);
     }
 
     
@@ -128,7 +136,14 @@ const addrecipe = ({navigation}) =>{
         setOpen2(false);
     };
 
-    
+    if(state.uploading){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+                <Text h4>Uploading...</Text> 
+            </View>
+        ) 
+    }
 
     return(
         <ScrollView style={styles.container}>
