@@ -1,5 +1,5 @@
 import { firebase } from "../firebase";
-import createDataContext from "./createDataContext";
+import recipeDataContext from "./recipeDataContext";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -7,6 +7,9 @@ const reducer = (state, action) => {
       return { ...state, uploading: action.payload };
     case "uploaded":
       return{...state,uploaded: action.payload};
+    case "refresh":
+      return{...state,shouldRefreshHome:action.payload.shouldRefreshHome
+              ,shouldRefreshUserRecipes:action.payload.shouldRefreshUserRecipes};
     default:
       return state;
   }
@@ -37,7 +40,7 @@ const getRecipesbyId = (dispatch) => async(id) =>{
   return recipesList;
 }
 
-function addRecipe(recipe){
+function addRecipe({recipe,dispatch}){
     const createdAt = firebase.firestore.FieldValue.serverTimestamp();
     recipe.fecha = createdAt;
     const recipesRef = firebase.firestore().collection("recetas");
@@ -60,7 +63,7 @@ const setUpload = (dispatch) => async(current) =>{
 const uploadRecipe = (dispatch) => async(uri,recipe) =>{
 
   const url = [];
-  console.log(recipe);
+  //console.log(recipe);
 
 
   if (uri) {
@@ -111,7 +114,8 @@ const uploadRecipe = (dispatch) => async(uri,recipe) =>{
                   .set(recipe)
                   .then(() => {
                     dispatch({type:"uploading",payload:false})
-                    dispatch({type:"uploaded",payload:true}) 
+                    dispatch({type:"uploaded",payload:true})
+                    dispatch({type:"refresh",payload:{shouldRefreshHome:true,shouldRefreshUserRecipes:true}}) 
                   })
                   .catch((error) => {
                     console.log(error);
@@ -125,7 +129,7 @@ const uploadRecipe = (dispatch) => async(uri,recipe) =>{
 
 }
 
-export const { Provider, Context } = createDataContext(
+export const { Provider, Context } = recipeDataContext(
   reducer,
   {
     setUpload,
@@ -135,6 +139,8 @@ export const { Provider, Context } = createDataContext(
   },
   {
     uploading:false,
-    uploaded:false
+    uploaded:false,
+    shouldRefreshHome:false,
+    shouldRefreshUserRecipes:false
   }
 );
