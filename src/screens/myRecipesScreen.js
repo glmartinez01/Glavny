@@ -1,12 +1,13 @@
 import React,{useEffect, useState,useContext} from "react";
-import { View,FlatList,StatusBar,ActivityIndicator } from "react-native";
+import { View,FlatList,StatusBar,ActivityIndicator,Dimensions } from "react-native";
 import { Text } from "react-native-elements";
 import FabButton from "../components/FabButton";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Context as AuthContext } from "../context/AuthContext";
 import {Context as RecipeContext} from "../context/recipes";
-import Box from "../components/Box";
+import Recetas from "../components/Recetas";
 
+const { width, height } = Dimensions.get('window')
 
 const myRecipesScreen = ({navigation}) =>{
 
@@ -50,26 +51,32 @@ const myRecipesScreen = ({navigation}) =>{
     
     return(
         <View style={{flex:1,marginTop:StatusBar.currentHeight+5,}}>
-            {recipes.length !=0 ? (<View>
-                <Text h4 style={{marginLeft:10}}>Tus Recetas, {state.user.name}</Text>
-            <FlatList
-                data={recipes}
-                keyExtractor={(item)=>item.id}
-                numColumns={3}
-                renderItem={({item}) => {
-                    return(
-                        <View>
-                            <Box title={item.titulo} image={{uri:item.imagen}} backgroundClr={"#fabd05"}/>
-                        </View>
-                    )
+            <View >
+                {recipes.length !=0 ? (<View>
+                    <Text h4 style={{marginLeft:10}}>Tus Recetas, {state.user.name}</Text>
+                <FlatList
+                    data={recipes}
+                    keyExtractor={(item)=>item.id}
+                    numColumns={2}
+                    columnWrapperStyle={{
+                        justifyContent: 'space-between',
+                        marginBottom: 15,
+                      }}
+                    renderItem={({item}) => {
+                        return(
+                            <View style={{margin:'4%'}}>
+                                <Recetas title={item.titulo} image={{uri:item.imagen}}/>
+                            </View>
+                        )
+                        }
                     }
-                }
-            />
-            </View>)
-            :
-            (<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                <Text h4 style={{textAlign:"center"}}>¡No tienes recetas agrega una usando el menu!</Text>
-            </View>)}
+                />
+                </View>)
+                :
+                (<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                    <Text h4 style={{textAlign:"center"}}>¡No tienes recetas agrega una usando el menu!</Text>
+                </View>)}
+            </View>
             <FabButton style={{bottom:80,right:60}} addRecipe={()=>{navigation.navigate('addrecipe',{id:state.user.id,username:state.user.name})}}/>
         </View>
     );

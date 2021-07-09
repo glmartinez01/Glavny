@@ -5,43 +5,46 @@ import {Text} from "react-native-elements";
 
 const { width, height } = Dimensions.get("screen");
 
-const Box = ({title, image, accion, backgroundClr }) => {
+const Recetas = ({title, image, accion, backgroundClr }) => {
   
   return (
     <View style={{alignItems:"center"}}>
     <TouchableOpacity onPress={accion}>
       <View style={[styles.caja,backgroundClr?{backgroundColor:backgroundClr}:null]}>
         <Image style={ styles.img} source={image}/>
+   
+          <Text style={styles.texto} numberOfLines={1}>{title}</Text>
+        
       </View>
     </TouchableOpacity>
-    <Text style={styles.texto} numberOfLines={1}>{title}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   caja:{
-    height: height*0.14,
-    width: width*0.32,
+    height: width*0.4,
+    width: width*0.4,
     margin:10,
-    marginRight:5,
-    justifyContent: "center",
-    alignItems: "center",
     overflow: "hidden",
-    borderRadius:30
+    position: 'relative'
   },
   texto:{
-    color:'#000',
-    padding:5,
+    backgroundColor:'rgba(0,0,0,0.7)',
+    height:height*0.5,
+    width:width,
+    color:'#fff',
+    padding: width*0.02,
+    paddingTop:height*0.01,
     fontSize:width*0.04,
-    fontWeight:"bold"
+    position: "absolute",
+    top: '70%'
   },
   img:{
     width: "100%",
     height: "100%",
-    borderRadius:10,
 
   }
 });
 
-export default Box;
+export default Recetas;
