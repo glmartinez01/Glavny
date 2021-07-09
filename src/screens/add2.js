@@ -32,15 +32,15 @@ const addrecipe = ({navigation,route}) =>{
     const {username,id} = route.params
 
     // const {state} = useContext(AuthContext);
-    const {state,setUpload,uploadRecipe} = useContext(RecipeContext);
+    const {recipesState,setUpload,uploadRecipe} = useContext(RecipeContext);
 
     useEffect(()=>{
-        if(state.uploaded){
+        if(recipesState.uploaded){
             navigation.goBack();
             setUpload(false);
             console.log("uploaded");
         }
-    },[state])
+    },[recipesState])
 
 
     const openModal = () =>{
@@ -136,7 +136,7 @@ const addrecipe = ({navigation,route}) =>{
         setOpen2(false);
     };
 
-    if(state.uploading){
+    if(recipesState.uploading){
         return(
             <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
                 <ActivityIndicator size="large" color="#fabd05" />

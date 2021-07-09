@@ -14,7 +14,7 @@ const myRecipesScreen = ({navigation}) =>{
     const [refresh,setRefresh] = useState(false);
     // const [update,setUpdate] = useState(false);
     const {state} = useContext(AuthContext);
-    const {getRecipesbyId} = useContext(RecipeContext);
+    const {recipesState,getRecipesbyId,dispatch} = useContext(RecipeContext);
     
 
     const newGet = async() =>{
@@ -25,15 +25,20 @@ const myRecipesScreen = ({navigation}) =>{
 
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-           newGet();
-        });
-        return unsubscribe;
-    }, [navigation]);
+        //console.log(recipesState);
+        if(recipesState.shouldRefreshUserRecipes){
+            newGet();
+            dispatch({type:"refresh",
+                    payload:{shouldRefreshHome:recipesState.shouldRefreshHome,
+                            shouldRefreshUserRecipes:false}})
+            //console.log(recipesState);
+        }
+        
+    }, [recipesState]);
 
-    // useEffect(()=>{
-    //     newGet();
-    // },[])
+    useEffect(()=>{
+        newGet();
+    },[])
 
     if(!recipes){
         return(

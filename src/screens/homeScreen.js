@@ -15,16 +15,10 @@ const { width, height } = Dimensions.get('window')
 const homeScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
-    const [refreshing,setRefreshing] = useState(false);
     const [urecipes,setURecipes] = useState(null);
     const { state, signout } = useContext(AuthContext);
-    const {getRecipes} = useContext(RecipeContext);
+    const {recipesState,getRecipes,dispatch} = useContext(RecipeContext);
 
-    const onRefresh = () =>{
-        setRefreshing(true);
-        newGet();
-        setRefreshing(false);
-    }
 
     const fetchRecipes = async () => {
         const recipesArray = await AsyncStorage.getItem(`recipesArray`);
@@ -40,15 +34,24 @@ const homeScreen = ({navigation}) =>{
 
     const newGet = async() =>{
         const newrecipes = await getRecipes();
-        console.log(newrecipes);
+        //console.log(newrecipes);
         setURecipes(newrecipes);
     }
 
     useEffect(()=>{
-
         fetchRecipes();
         newGet();
     },[])
+
+    useEffect(()=>{
+        //console.log(recipesState);
+        if(recipesState.shouldRefreshHome){
+            newGet();
+            dispatch({type:"refresh",
+            payload:{shouldRefreshHome:false,
+                    shouldRefreshUserRecipes:recipesState.shouldRefreshUserRecipes}})
+        }
+    },[recipesState])
 
     if(!recipes || !urecipes){
         return(
