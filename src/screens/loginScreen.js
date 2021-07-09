@@ -5,7 +5,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 const {width,height} = Dimensions.get("window");
 
-const loginScreen = () =>{
+const loginScreen = ({ navigation }) =>{
 
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
@@ -48,7 +48,7 @@ const loginScreen = () =>{
             <TouchableOpacity style={styles.loginBtn} onPress={handleSignin}>
                 <Text style={styles.loginText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("signup")}>
                 <Text style={styles.signupText}>¿No tienes una cuenta? Registrate.</Text>
             </TouchableOpacity>
         </View>

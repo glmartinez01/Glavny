@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Context as AuthContext } from "../context/AuthContext";
 import * as SplashScreen from "expo-splash-screen";
 import CameraScreen from "../screens/cameraScreen";
+import SignUp from "../screens/signup";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -101,6 +102,14 @@ const Navigation = ()=>{
                   <Stack.Screen 
                     name="Log"
                     component={loginScreen}
+                    options={{
+                    animationEnabled: false,
+                    headerShown: false
+                    }}
+                />
+                <Stack.Screen 
+                    name="signup"
+                    component={SignUp}
                     options={{
                     animationEnabled: false,
                     headerShown: false
