@@ -1,12 +1,16 @@
-import React, { useState,useContext, useEffect } from "react";
+import React, { useState,useContext, useEffect,useRef } from "react";
 import { TouchableOpacity,Modal } from "react-native";
-import { View,StyleSheet,TextInput,StatusBar,ScrollView,Dimensions,Image} from "react-native";
+import { View,StyleSheet,TextInput,StatusBar,ScrollView,Dimensions,Image,Alert,Animated} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Ionicons } from "@expo/vector-icons";
-import { Swipeable } from "react-native-gesture-handler";
+import { State, Swipeable } from "react-native-gesture-handler";
 import { Text } from "react-native-elements";
 import {Context as RecipeContext} from "../context/recipes";
+import {Context as AuthContext} from "../context/AuthContext";
 import { ActivityIndicator } from "react-native";
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import { CommonActions } from '@react-navigation/native';
 
 const {width, height} = Dimensions.get("window")
 
@@ -22,6 +26,7 @@ const RenderRight = (progress,dragX) =>{
 const addrecipe = ({navigation,route}) =>{
     const [arrayingredients,setArrayIngredients] = useState([]);
     const [arrayinstructions,setArrayInstructions] = useState([]);
+    const [loading,setLoading] = useState(false); 
     const [quantity,setQuantity] = useState("")
     const [ingredient,setIngredient] = useState("");
     const [instruction,setInstruction] = useState("");
@@ -29,16 +34,22 @@ const addrecipe = ({navigation,route}) =>{
     const [open2,setOpen2] = useState(false);
     const [image,setImage] = useState("");
     const [titulo,setTitulo] = useState("");
-    const {username,id} = route.params
+    const {username,id,recipeInfo} = route.params;
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const headerHeight = 350;
 
-    // const {state} = useContext(AuthContext);
-    const {recipesState,setUpload,uploadRecipe} = useContext(RecipeContext);
+    const {state} = useContext(AuthContext);
+    const {recipesState,setUpload,setDelete,uploadRecipe,deleteRecipe} = useContext(RecipeContext);
 
     useEffect(()=>{
         if(recipesState.uploaded){
             navigation.goBack();
             setUpload(false);
             console.log("uploaded");
+        }
+        if(recipesState.deleted){
+            navigation.navigate('hometabs');
+            setDelete(false);
         }
     },[recipesState])
 
@@ -55,6 +66,35 @@ const addrecipe = ({navigation,route}) =>{
         setImage(image);
     }
 
+    async function pickImage(){
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+          if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+          }else{
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: false,
+              aspect: [4, 3],
+              base64:true,
+              quality: 1,
+            });
+        
+            console.log(result.uri);
+        
+            if (!result.cancelled) {
+    
+              try {
+                  let message = 'data:image/png;base64, ' + result.base64;
+                  //setImage(result.uri)
+                  const resultado = result.uri;
+                  setImage(resultado);
+              } catch (error) {
+                  console.log(error);
+              }
+            }
+          } 
+    }
+
     const handleVerify=()=>{
         if(arrayinstructions.length<1 || arrayingredients.length<1 || image == "" || titulo == ""){
             alert("Favor ingrese todos los datos necesarios: Foto de la Receta, Titulo, Instrucciones e Ingredientes");
@@ -63,18 +103,60 @@ const addrecipe = ({navigation,route}) =>{
         }
     }
 
+
+    const handleDelete = ()=>{
+        deleteRecipe(recipeInfo);
+    }
+
+    function showAlert(){
+        Alert.alert(
+            "¿Esta seguro que quiere borrar la receta?","No hay vuelta atras.",
+            [
+                {text: "Cancelar",onPress: ()=>{console.log("Cancelado")}},
+                {text: "Confirmar",onPress:()=>{deleteRecipe(recipeInfo)}}
+
+            ]
+        )
+    }
+
     const handleUpload = async() =>{
-        let date = new Date();
-        let rid = 'recp' + date.getTime();
-        const recipe = {
-            id:rid,
-            publicado_por:username,
-            titulo:titulo,
-            ingredientes:arrayingredients,
-            instrucciones:arrayinstructions,
-            userID:id
+        if(recipeInfo == undefined){
+            let date = new Date();
+            let rid = 'recp' + date.getTime();
+            const recipe = {
+                id:rid,
+                publicado_por:username,
+                titulo:titulo,
+                ingredientes:arrayingredients,
+                instrucciones:arrayinstructions,
+                userID:id
+            }
+            uploadRecipe(image,recipe,true);
+        }else{
+            if(recipeInfo.imagen != image){
+                const recipe = {
+                    id:recipeInfo.id,
+                    publicado_por:recipeInfo.publicado_por,
+                    titulo:titulo,
+                    ingredientes:arrayingredients,
+                    instrucciones:arrayinstructions,
+                    userID:recipeInfo.userID,
+                }
+                uploadRecipe(image,recipe,true);
+            }else{
+                const recipe = {
+                    id:recipeInfo.id,
+                    publicado_por:recipeInfo.publicado_por,
+                    titulo:titulo,
+                    ingredientes:arrayingredients,
+                    instrucciones:arrayinstructions,
+                    userID:recipeInfo.userID,
+                    imagen:recipeInfo.imagen,
+                }
+                uploadRecipe(image,recipe,false);
+            }
         }
-       uploadRecipe(image,recipe);
+        
     }
 
     
@@ -136,35 +218,35 @@ const addrecipe = ({navigation,route}) =>{
         setOpen2(false);
     };
 
-    if(recipesState.uploading){
-        return(
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-                <ActivityIndicator size="large" color="#fabd05" />
-                <Text h4>Uploading...</Text> 
-            </View>
-        ) 
-    }
+    const setVariables = ()=>{
+        setArrayInstructions(recipeInfo.instrucciones);
+        setArrayIngredients(recipeInfo.ingredientes);
+        setTitulo(recipeInfo.titulo);
+        setImage(recipeInfo.imagen);
+        setLoading(false);
+    };
 
-    return(
-        <ScrollView style={styles.container}>
-            {/* Header */}
-            <View style={{flexDirection:"row",backgroundColor:"#fabd05",marginTop:StatusBar.currentHeight}}>
-                <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5}}>
-                <TouchableOpacity style={{height:50,width:50,borderRadius:5,marginLeft:10}} onPress={()=> navigation.goBack()}>
-                    <Ionicons name="ios-arrow-back" size={35} color="white"/>
-                </TouchableOpacity>
-                </View>
-                <View style={{flex:1,justifyContent:'center'}}/>
-                <View style={{alignItems:'flex-end',justifyContent:'center',marginRight:10,marginTop:5}}>
-                    <TouchableOpacity style={{height:50,width:50,borderRadius:5}} onPress={handleVerify}>
-                        <Icon name="cloud-upload" size={35} color="white"/> 
-                    </TouchableOpacity> 
-                </View>
-            </View>
-                
+    useEffect(()=>{
+        if(recipeInfo!=undefined){
+            setLoading(true);
+            setVariables();
+        }
+    },[]);
+    function DataScrollView(){
+        return(
+        <ScrollView style={styles.container}
+            scrollEventThrottle={16}
+            onScroll={(e)=>{
+                scrollY.setValue(e.nativeEvent.contentOffset.y)
+            }}
+        >   
             <View style={{height:300,backgroundColor:"#fabd05",alignItems:"center",justifyContent:"center"}}>
-                {image ? <Image resizeMode="cover" style={{height:300,width:"100%"}} source={{uri:image}}/> :null}
-                <Icon name="camera" size={24} onPress={()=>{navigation.navigate("camera",{onImageChange})}} color="white" style={{position:"absolute"}}/>  
+                {image ? <Image resizeMode="cover" style={{height:300,width:"100%",opacity:0.7}} source={{uri:image}}/> :null}
+                <View style={{flexDirection:"row",position:"absolute"}}>
+                    <Icon name="camera" size={30} onPress={()=>{navigation.navigate("camera",{onImageChange})}} color="white"/>
+                    <Text style={{fontSize:30,color:"white"}}> / </Text>
+                    <Icon name="folder" size={30} color="white" onPress={pickImage}/>   
+                </View>
             </View>
             {/* <Ionicons name="arrow-back" size={width*0.09} color="white" onPress={() => {navigation.pop()}} style={{position:"absolute", left:'3%', top:'5%'}}/> */}
             {/* Overview */}
@@ -174,7 +256,8 @@ const addrecipe = ({navigation,route}) =>{
                     <View style={{flex:1,justifyContent:'center'}}>
                         <TextInput
                             onChangeText={setTitulo}
-                            placeholderTextColor="#000"
+                            value={titulo}
+                            placeholderTextColor="#aaa"
                             placeholder="Titulo de la Receta"
                             style={{fontSize:16}}
                         />
@@ -237,6 +320,10 @@ const addrecipe = ({navigation,route}) =>{
                     </View>
                 </View>
                 </TouchableOpacity>
+                {recipeInfo?.userID == state.user.id ?
+                <TouchableOpacity style={styles.loginBtn} onPress={showAlert}>
+                    <Text style={styles.loginText}>Borrar</Text>
+                </TouchableOpacity>:null}
             </View>
 
             <Modal animationType="fade" transparent={true} visible={open}>
@@ -267,6 +354,119 @@ const addrecipe = ({navigation,route}) =>{
                 </View>
             </Modal>
         </ScrollView>
+        )
+    }
+    function renderHeaderBar(){
+        return(
+            <View style={{position:'absolute',top:0,left:0,right:0,height:90,flexDirection:'row',alignItems:'flex-end',justifyContent:"space-between",paddingHorizontal:24,paddingBottom:10}}>
+                <Animated.View
+                    style={{position:'absolute',top:0,left:0,right:0,bottom:0,backgroundColor:"#fabd05",
+                            opacity:scrollY.interpolate({
+                                inputRange:[0,90],
+                                outputRange:[0,-90]
+                            })}}
+                />
+                <TouchableOpacity style={{
+                    alignItems:'center',
+                    justifyContent:'center',
+                    height:35,
+                    width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'
+                }} onPress={()=>{navigation.goBack()}}>
+                    <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
+                </TouchableOpacity>
+                 
+                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
+                    onPress={()=>{handleVerify}}>
+                        <Icon name="cloud-upload" size={24} color="#F5F6FB" style={{marginLeft:3}}/>
+                    </TouchableOpacity>
+                
+                
+            </View>
+        )
+    }
+    function header(){
+        return(
+            <View style={{flexDirection:"row",backgroundColor:"#fabd05",marginTop:StatusBar.currentHeight}}>
+                <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5}}>
+                <TouchableOpacity style={{height:50,width:50,borderRadius:5,marginLeft:10}} onPress={()=> navigation.goBack()}>
+                    <Ionicons name="ios-arrow-back" size={35} color="white"/>
+                </TouchableOpacity>
+                </View>
+                <View style={{flex:1,justifyContent:'center'}}/>
+                <View style={{alignItems:'flex-end',justifyContent:'center',marginRight:10,marginTop:5}}>
+                    <TouchableOpacity style={{height:50,width:50,borderRadius:5}} onPress={handleVerify}>
+                        <Icon name="cloud-upload" size={35} color="white"/> 
+                    </TouchableOpacity> 
+                </View>
+            </View>
+        )
+    }
+
+    if(loading){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+            </View>
+        ) 
+    }
+
+    if(recipesState.uploading){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+                <Text h4>Uploading...</Text> 
+            </View>
+        ) 
+    }
+
+    if(recipesState.deleting){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+                <Text h4>Deleting...</Text> 
+            </View>
+        ) 
+    }
+
+    return(
+        <View style={{flex:1}}>
+            {/* Header */}
+            <StatusBar backgroundColor="#fabd05"/>
+            <View style={{height:90,alignItems:"flex-end",flexDirection:"row",backgroundColor:"#fabd05",
+            justifyContent:"space-between",paddingHorizontal:24,paddingBottom:10}}>
+            <TouchableOpacity style={{
+                    alignItems:'center',
+                    justifyContent:'center',
+                    height:35,
+                    width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'
+                }} onPress={()=>{navigation.goBack()}}>
+                    <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
+                </TouchableOpacity>
+                 
+                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
+                    onPress={()=>{handleVerify}}>
+                        <Icon name="cloud-upload" size={24} color="#F5F6FB" style={{marginLeft:3}}/>
+                    </TouchableOpacity>
+            </View>
+            <DataScrollView/>
+        </View>
+        
     )
 }
 
@@ -286,6 +486,22 @@ const styles = StyleSheet.create({
         borderColor:"#CDCBD0",
         borderWidth:0.5,
         justifyContent:"center",alignItems:"center"
+    },
+    loginBtn:{
+        width:width*0.7,
+        height: height*0.06,
+        backgroundColor:"#fb5b5a",
+        borderRadius:width*0.5,
+        alignItems:"center",
+        justifyContent:"center",
+        alignSelf:"center",
+        marginTop:height*0.04,
+        marginBottom:height*0.01
+    },
+    loginText:{
+        alignSelf:"center",
+        color:"white",
+        fontSize: width*0.04,
     }
 })
 

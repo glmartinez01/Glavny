@@ -58,11 +58,11 @@ export default class FabButton extends Component {
     
         return (
             <View style={[styles.container,this.props.style]}>
-                <TouchableWithoutFeedback>
+                {/* <TouchableWithoutFeedback>
                     <Animated.View style={[styles.button,styles.submenu,del]}>
                         <Icon name="trash" size={24} color="#fff"/>
                     </Animated.View>
-                </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback> */}
                 <TouchableWithoutFeedback onPress={this.props.addRecipe}>
                     <Animated.View style={[styles.button,styles.submenu,add]}>
                         <Icon name="plus" size={24} color="#fff"/>

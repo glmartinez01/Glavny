@@ -1,6 +1,7 @@
 import React,{useState,useEffect,useContext} from 'react';
 import { StyleSheet, View,ActivityIndicator,ScrollView,Dimensions,AsyncStorage,FlatList,RefreshControl } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import Icon from "react-native-vector-icons/FontAwesome";
 import {Text,Header} from "react-native-elements";
 import getEnvVars from "../../environment";
 import {Context as RecipeContext} from "../context/recipes";
@@ -67,7 +68,7 @@ const homeScreen = ({navigation}) =>{
             statusBarProps={{backgroundColor:"#fabd05"}}
             containerStyle={{backgroundColor:"#fabd05"}}
             centerComponent={{ text: 'Glavny', style: { color: '#fff',fontWeight:'bold',fontSize:20 } }}
-            rightComponent={<AntDesign name="user" size={30} color="white" onPress={()=>{signout()}} />}
+            rightComponent={<Icon name="sign-out" size={30} color="white" onPress={()=>{signout()}} />}
             />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.section}>
@@ -84,7 +85,7 @@ const homeScreen = ({navigation}) =>{
                     renderItem={({item}) => {
                         return(
                             <View style={{flexDirection:'row'}}>
-                                <Box title={item.titulo} image={{uri:item.imagen}} backgroundClr={"#fabd05"}/>
+                                <Box title={item.titulo} image={{uri:item.imagen}} accion={()=>{navigation.navigate('fbaseRecipeScreen',{recipeInfo:item})}} backgroundClr={"#fabd05"}/>
                             </View>
                         )
                         }

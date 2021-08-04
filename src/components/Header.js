@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const {width, height} = Dimensions.get("window");
 
-export default function Header({leftComponent,centerComponent,rightComponent}) {
+export default function Header({accion}) {
 
   //const {theme, ContextStyles} = useContext(ThemeContext);
 
@@ -16,18 +16,18 @@ export default function Header({leftComponent,centerComponent,rightComponent}) {
   
   
   return (
-    <View style={styles.header}>
-        <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5,backgroundColor:"#fafafa"}}>
-            {leftComponent}
+    <View style={{flexDirection:"row",backgroundColor:"#fabd05",marginTop:StatusBar.currentHeight}}>
+        <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5}}>
+        <TouchableOpacity style={{height:50,width:50,borderRadius:5,marginLeft:10}} onPress={()=> navigation.goBack()}>
+            <Ionicons name="ios-arrow-back" size={35} color="white"/>
+        </TouchableOpacity>
         </View>
-      
-      <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
-        {centerComponent}
-      </View>
-      <View style={{alignItems:'flex-end',justifyContent:'center'}}>
-        {rightComponent}
-      </View>
-      
+        <View style={{flex:1,justifyContent:'center'}}/>
+        <View style={{alignItems:'flex-end',justifyContent:'center',marginRight:10,marginTop:5}}>
+            <TouchableOpacity style={{height:50,width:50,borderRadius:5}} onPress={accion}>
+                <Icon name="cloud-upload" size={35} color="white"/> 
+            </TouchableOpacity> 
+        </View>
     </View>
   );
 }

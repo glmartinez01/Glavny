@@ -1,61 +1,37 @@
-import React,{useState,useEffect, useRef} from 'react';
+import React,{useState,useEffect, useRef,useContext} from 'react';
 import {View,Animated,Image,TouchableOpacity,StatusBar,ActivityIndicator,FlatList,AsyncStorage} from "react-native";
 import { Text } from 'react-native-elements';
 import CreatorCard from '../components/CreatorCard';
 import Icon from "react-native-vector-icons/FontAwesome";
 import getEnvVars from "../../environment";
 import { Linking } from 'react-native';
+import { Context as AuthContext } from "../context/AuthContext";
 
 
 const {apiKeyS} = getEnvVars();
 const headerHeight = 350;
 
-const recipeScreen = ({navigation,route}) =>{
+const fbaseRecipeScreen = ({navigation,route}) =>{
 
-    const {currentRecipe} = route.params;
-    const [recipeInfo,setRecipeInfo] = useState(null);
+    const { state, signout } = useContext(AuthContext);
+
+    const {recipeInfo,ejemplo} = route.params;
+    // const [recipeInfo,setRecipeInfo] = useState(null);
     const [instructions,setInstructions] = useState(null);
     const scrollY = useRef(new Animated.Value(0)).current;
 
-    const fecthInfo = async () => {
-        const recipeStorageInfo = await AsyncStorage.getItem(`recipeinfo${currentRecipe.id}`);
-        if(recipeStorageInfo == null){
-            const endpoint = `https://api.spoonacular.com/recipes/${currentRecipe.id}/information?apiKey=${apiKeyS}`;
-      
-            const response = await fetch(endpoint);
-            const data = await response.json();
-            
-            await AsyncStorage.setItem(`recipeinfo${currentRecipe.id}`,JSON.stringify(data));
-            setRecipeInfo(data);
-        }else{
-            setRecipeInfo(JSON.parse(recipeStorageInfo));
-        }
-        
-    };
 
     const navigationlink = () =>{
-        if(recipeInfo.analyzedInstructions.length > 0 ){
-            navigation.navigate("recipeinstructions",{currentRecipe:currentRecipe,recipeInfo:recipeInfo})
-            //console.log(recipeInfo.analyzedInstructions);
-        }else{
-            Linking.openURL(recipeInfo.sourceUrl);
+        if(recipeInfo.instrucciones?.length > 0 ){
+            navigation.navigate("recipeinstructions",{instrucciones:recipeInfo.instrucciones})
+            //console.log(recipeInfo.instrucciones);
         }
     }
-
-    // const fetchInstructions = async () =>{
-    //     const endpoint = `https://api.spoonacular.com/recipes/${currentRecipe.id}/analyzedInstructions?apiKey=${apiKeyS}`;
-
-    //     const response = await fetch(endpoint);
-    //     const data = await response.json();
-
-    //     setInstructions(data[0].steps);
-    //     console.log(instructions);
-    // }
 
     function renderRecipeCardHeader(){
         return(
             <View style={{alignItems:'center',overflow:'hidden'}}>
-                <Animated.Image resizeMode="contain" source={{uri:currentRecipe.image}}
+                <Animated.Image resizeMode="cover" source={{uri:recipeInfo.imagen}}
                                 style={{height:headerHeight,width:"200%",
                                         transform:[
                                             {
@@ -83,7 +59,7 @@ const recipeScreen = ({navigation,route}) =>{
                                                 })
                                             }
                                         ]}}>
-                    <CreatorCard name={recipeInfo.creditsText} navigation={navigationlink}/>
+                    <CreatorCard name={recipeInfo.publicado_por} navigation={()=>{navigation.navigate("recipeinstructions",{instrucciones:recipeInfo.instrucciones})}}/>
                 </Animated.View>
             </View>
         )
@@ -111,12 +87,23 @@ const recipeScreen = ({navigation,route}) =>{
                 }} onPress={()=>{navigation.goBack()}}>
                     <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
                 </TouchableOpacity>
+                {recipeInfo.userID == state.user.id ? 
+                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
+                    onPress={()=>{navigation.navigate('addrecipe',{recipeInfo:recipeInfo})}}>
+                        <Icon name="edit" size={24} color="#F5F6FB" style={{marginLeft:3}}/>
+                    </TouchableOpacity>
+                :null}
+                
             </View>
         )
     }
 
     useEffect(()=>{
-        fecthInfo();
+        console.log(recipeInfo);
         //fetchInstructions();
     },[])
     
@@ -137,7 +124,7 @@ const recipeScreen = ({navigation,route}) =>{
                 translucent
             />
             <Animated.FlatList
-                data={recipeInfo.extendedIngredients}
+                data={recipeInfo.ingredientes}
                 keyExtractor={(item)=>`${item.id}`}
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
@@ -153,13 +140,13 @@ const recipeScreen = ({navigation,route}) =>{
                 renderItem={({item})=>(
                     <View style={{flexDirection:'row',paddingHorizontal:30,marginVertical:5}}>
                         <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5,backgroundColor:"#fafafa"}}>
-                            <Image style={{height:40,width:40}} source={{uri:`https://spoonacular.com/cdn/ingredients_500x500/${item.image}`}}/>
+                            <Image style={{height:40,width:40}} source={require('../../assets/project/ingredient.png')}/>
                         </View>
                         <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
-                            <Text style={{fontSize:16,fontWeight:'bold'}}>{item.nameClean}</Text>
+                            <Text style={{fontSize:16,fontWeight:'bold'}}>{item.name}</Text>
                         </View>
                         <View style={{alignItems:'flex-end',justifyContent:'center'}}>
-                           <Text style={{fontSize:14,fontStyle:'italic'}}>{item.measures.metric.amount} {item.measures?.metric.unitShort}</Text> 
+                           <Text style={{fontSize:14,fontStyle:'italic'}}>{item.quantity}</Text> 
                         </View>
                     </View>
                 )}
@@ -172,4 +159,4 @@ const recipeScreen = ({navigation,route}) =>{
 }
 
 
-export default recipeScreen;
+export default fbaseRecipeScreen;

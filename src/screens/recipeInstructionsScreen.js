@@ -12,11 +12,18 @@ const recipeInstructionsScreen = ({navigation,route}) =>{
 
     const [instructions,setInstructions] = useState(null);
     // const [newinstructions,setnewInstructions] = useState(null);
-    const {currentRecipe,recipeInfo} = route.params;
+    const {currentRecipe,recipeInfo,instrucciones} = route.params;
 
     const fetchInstructions = async () =>{
-        const vari = recipeInfo.analyzedInstructions ? recipeInfo.analyzedInstructions : null;
-        setInstructions(vari.length > 0  ? vari[0].steps : null);
+        if(instrucciones == undefined){
+            const vari = recipeInfo.analyzedInstructions ? recipeInfo.analyzedInstructions : null;
+            setInstructions(vari.length > 0  ? vari[0].steps : null);
+            console.log(vari);
+        }else{
+            setInstructions(instrucciones);
+            console.log(instrucciones);
+        }
+        
     }
 
     useEffect(()=>{
@@ -53,11 +60,11 @@ const recipeInstructionsScreen = ({navigation,route}) =>{
            
             <FlatList
                 data={instructions}
-                keyExtractor={(item)=>`${item.number}`}
+                keyExtractor={(item)=>{ instrucciones == undefined ? `${item.number}`: item.id.toString()}}
                 renderItem={({item})=>(
                     <View style={{flexDirection:'row',paddingHorizontal:10,marginVertical:5}}>
                         <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:50,backgroundColor:"#FCD55F"}}>
-                            <Text style={{color:"#FFFAEB",fontWeight:"bold",fontSize:18}}>{item.number}</Text>
+                            <Text style={{color:"#FFFAEB",fontWeight:"bold",fontSize:18}}>{ instrucciones == undefined ? item.number : item.id}</Text>
                         </View>
                         <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
                             <Text style={{fontSize:16,fontWeight:'bold'}}>{item.step}</Text>

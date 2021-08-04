@@ -1,7 +1,8 @@
-import React,{useState,useContext} from "react";
+import React,{useState,useContext,useEffect} from "react";
 import {View,StyleSheet,TextInput,Text,TouchableOpacity,Dimensions} from "react-native";
 import { Context as AuthContext } from "../context/AuthContext";
 import Icon from "react-native-vector-icons/FontAwesome";
+import  Alert  from "../components/Alert";
 
 const {width,height} = Dimensions.get("window");
 
@@ -10,8 +11,17 @@ const loginScreen = ({ navigation }) =>{
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [hidePass,setHidePass] = useState(true);
+    const [error,setError] = useState("");
 
-    const { state, signin } = useContext(AuthContext);
+    const { state, signin, clearErrorMessage } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (state.errorMessage) clearErrorMessage();
+    }, []);
+    
+    useEffect(() => {
+        if (state.errorMessage) setError(state.errorMessage);
+    }, [state.errorMessage]);
 
     const handleSignin = () => {
         signin(email,password);
@@ -19,6 +29,7 @@ const loginScreen = ({ navigation }) =>{
 
     return(
         <View style={styles.container}>
+            {error ? <Alert type="error" title={error} /> : null}
             <Text style={styles.logo}>Glavny</Text>
             <View style={styles.inputView} >
                 <TextInput  

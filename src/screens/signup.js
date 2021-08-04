@@ -1,12 +1,16 @@
 import React, { useState,useContext,useEffect } from "react";
-import { StyleSheet, View, Dimensions, TextInput, Text } from "react-native";
+import { StyleSheet, View, Dimensions, TextInput, Text,TouchableOpacity} from "react-native";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { validate } from "email-validator";
+import Alert from "../components/Alert";
+import { Context as AuthContext } from "../context/AuthContext";
 
 const {width, height} = Dimensions.get("window");
 
 const Signup = ({ navigation }) => {
+  const { state, signup, onSignIn, clearErrorMessage } = useContext(AuthContext);
+
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +22,14 @@ const Signup = ({ navigation }) => {
   const [hidePass1, setHidePass1] = useState(true);
   const [hidePass2, setHidePass2] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (state.errorMessage) clearErrorMessage();
+  }, []);
+
+  useEffect(() => {
+    if (state.errorMessage) setError(state.errorMessage);
+  }, [state.errorMessage]);
   
   const handleVerify = (input) => {
     if (input === "fullname") {
@@ -140,6 +152,9 @@ const Signup = ({ navigation }) => {
         />
       </View>
       <Button title="Crear Cuenta" titleStyle={styles.titleBtn} onPress={() => handleVerify("signup")} buttonStyle={styles.signUpBtn}/>
+      <TouchableOpacity onPress={() => navigation.navigate("Log")}>
+        <Text style={styles.signupText}>¿Ya tienes una cuenta? Inicia Sesion.</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -213,6 +228,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
     marginBottom: '2%',
   },
+  signupText:{
+    color:"white",
+    fontSize:width*0.035
+  }
 });
 
 export default Signup;

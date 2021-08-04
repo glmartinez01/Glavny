@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   caja:{
     height: width*0.4,
     width: width*0.4,
-    margin:10,
+    margin:0,
     overflow: "hidden",
     position: 'relative'
   },

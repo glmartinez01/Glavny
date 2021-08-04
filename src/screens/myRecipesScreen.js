@@ -48,12 +48,21 @@ const myRecipesScreen = ({navigation}) =>{
             </View>
         )
     }
+
+    if(recipes.length < 1){
+        return(
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                <Text h4 style={{textAlign:"center"}}>¡No tienes recetas agrega una usando el menu!</Text>
+                <FabButton style={{bottom:80,right:60}} addRecipe={()=>{navigation.navigate('addrecipe',{id:state.user.id,username:state.user.name})}}/>
+            </View>
+            
+        )
+    }
     
     return(
         <View style={{flex:1,marginTop:StatusBar.currentHeight+5,}}>
-            <View >
-                {recipes.length !=0 ? (<View>
-                    <Text h4 style={{marginLeft:10}}>Tus Recetas, {state.user.name}</Text>
+            <View>
+                <Text h4 style={{marginLeft:10}}>Tus Recetas, {state.user.name}</Text>
                 <FlatList
                     data={recipes}
                     keyExtractor={(item)=>item.id}
@@ -64,18 +73,14 @@ const myRecipesScreen = ({navigation}) =>{
                       }}
                     renderItem={({item}) => {
                         return(
-                            <View style={{margin:'4%'}}>
-                                <Recetas title={item.titulo} image={{uri:item.imagen}}/>
+                            
+                            <View style={{width:'50%',marginTop:5}}>
+                                <Recetas title={item.titulo} accion={()=>{navigation.navigate('fbaseRecipeScreen',{recipeInfo:item})}} image={{uri:item.imagen}}/>
                             </View>
                         )
                         }
                     }
-                />
-                </View>)
-                :
-                (<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text h4 style={{textAlign:"center"}}>¡No tienes recetas agrega una usando el menu!</Text>
-                </View>)}
+                /> 
             </View>
             <FabButton style={{bottom:80,right:60}} addRecipe={()=>{navigation.navigate('addrecipe',{id:state.user.id,username:state.user.name})}}/>
         </View>

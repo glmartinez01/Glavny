@@ -1,6 +1,7 @@
 import React,{useEffect,useContext} from "react";
 import homeScreen from "../screens/homeScreen";
 import recipeScreen from "../screens/recipeScreen";
+import fbaseRecipeScreen from "../screens/fbaseRecipeScreen";
 import userRecipesScreen from "../screens/sinusar/usersRecipesScreen";
 import myRecipesScreen from "../screens/myRecipesScreen";
 import addRecipeScreen from "../screens/addRecipesScreen";
@@ -32,10 +33,7 @@ function HomeStack(){
         name="recipe"
         component={recipeScreen}
         options={{headerShown:false}}/>
-        <Stack.Screen 
-        name="recipeinstructions"
-        component={recipeInstructionsScreen}
-        options={{headerShown:false}}/>
+        
       </Stack.Navigator>
     )
 }
@@ -47,13 +45,20 @@ function myRecipesStack(){
       name="myrecipes"
       component={myRecipesScreen}
       options={{headerShown:false}}/>
-      <Stack.Screen 
-      name="addrecipe"
-      component={addrecipe}
-      options={{headerShown:false}}/>
+      
+      
+      
     </Stack.Navigator>
   )
 }
+
+// function otroStack(){
+//   <Stack.Navigator>
+//     <Stack.Screen name="homeStack" component={HomeStack}/>
+    
+//     <Stack.Screen name="recipeStack" component={myRecipesStack}/>
+//   </Stack.Navigator>
+// }
   
 function MyTabs(){
     return(  
@@ -71,10 +76,16 @@ function finalStack(){
   
     <Stack.Navigator>
       <Stack.Screen name="hometabs" component={MyTabs} options={{headerShown:false}}/>
+      <Stack.Screen name="fbaseRecipeScreen" component={fbaseRecipeScreen} options={{headerShown:false}}/>
       <Stack.Screen 
       name="camera"
       component={CameraScreen}
       options={{headerShown:false}}/>
+      <Stack.Screen name="addrecipe" component={addrecipe} options={{headerShown:false}}/>
+      <Stack.Screen 
+        name="recipeinstructions"
+        component={recipeInstructionsScreen}
+        options={{headerShown:false}}/>
     </Stack.Navigator>
   )
 }
