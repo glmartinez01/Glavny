@@ -14,7 +14,9 @@ const Box = ({title, image, accion, backgroundClr }) => {
         <Image style={ styles.img} source={image}/>
       </View>
     </TouchableOpacity>
-    <Text style={styles.texto} numberOfLines={1}>{title}</Text>
+    <View style={{width:width*0.35,justifyContent:"center"}}>
+    <Text style={styles.texto}>{title}</Text>
+    </View>
     </View>
   );
 };
@@ -32,6 +34,7 @@ const styles = StyleSheet.create({
   },
   texto:{
     color:'#000',
+    textAlign:"center",
     padding:5,
     fontSize:width*0.04,
     fontWeight:"bold"

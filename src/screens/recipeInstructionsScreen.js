@@ -57,21 +57,39 @@ const recipeInstructionsScreen = ({navigation,route}) =>{
                 </TouchableOpacity>}
                     centerComponent={<Text h4 style={{color:"#fff"}}>Instrucciones:</Text>}
                 />
-           
-            <FlatList
-                data={instructions}
-                keyExtractor={(item)=>{ instrucciones == undefined ? `${item.number}`: item.id.toString()}}
-                renderItem={({item})=>(
-                    <View style={{flexDirection:'row',paddingHorizontal:10,marginVertical:5}}>
-                        <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:50,backgroundColor:"#FCD55F"}}>
-                            <Text style={{color:"#FFFAEB",fontWeight:"bold",fontSize:18}}>{ instrucciones == undefined ? item.number : item.id}</Text>
-                        </View>
-                        <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
-                            <Text style={{fontSize:16,fontWeight:'bold'}}>{item.step}</Text>
-                        </View>
-                    </View>
-                )}
+           {instrucciones == undefined ?
+             <FlatList
+             data={instructions}
+             keyExtractor={(item,index)=>{ `${item.number}`}}
+             renderItem={({item})=>(
+                 <View style={{flexDirection:'row',paddingHorizontal:10,marginVertical:5}}>
+                     <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:50,backgroundColor:"#FCD55F"}}>
+                         <Text style={{color:"#FFFAEB",fontWeight:"bold",fontSize:18}}>{ item.number}</Text>
+                     </View>
+                     <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
+                         <Text style={{fontSize:16,fontWeight:'bold'}}>{item.step}</Text>
+                     </View>
+                 </View>
+             )}
             />
+           :
+           <FlatList
+           data={instructions}
+           keyExtractor={(item)=>{`${item.id}`}}
+           renderItem={({item})=>(
+               <View style={{flexDirection:'row',paddingHorizontal:10,marginVertical:5}}>
+                   <View key={item.id} style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:50,backgroundColor:"#FCD55F"}}>
+                       <Text style={{color:"#FFFAEB",fontWeight:"bold",fontSize:18}}>{item.id}</Text>
+                   </View>
+                   <View style={{flex:1,paddingHorizontal:20,justifyContent:'center'}}>
+                       <Text style={{fontSize:16,fontWeight:'bold'}}>{item.step}</Text>
+                   </View>
+               </View>
+           )}
+       />
+           
+           }
+           
         </View>
 
     )

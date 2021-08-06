@@ -1,8 +1,8 @@
 import React,{useEffect, useState} from "react";
 import { View,Text,FlatList,TextInput,StatusBar,StyleSheet,ActivityIndicator,Dimensions,RefreshControl } from "react-native";
-import Card from "../../components/Card";
+import Card from "../components/Card";
 import { SearchBar } from "react-native-elements";
-import {getRecipes} from "../../context/recipes";
+import {getRecipes} from "../context/recipes";
 import Icon from "react-native-vector-icons/FontAwesome";
 const {width,height} = Dimensions.get("window");
 

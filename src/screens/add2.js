@@ -96,6 +96,7 @@ const addrecipe = ({navigation,route}) =>{
     }
 
     const handleVerify=()=>{
+        console.log('entro al verify');
         if(arrayinstructions.length<1 || arrayingredients.length<1 || image == "" || titulo == ""){
             alert("Favor ingrese todos los datos necesarios: Foto de la Receta, Titulo, Instrucciones e Ingredientes");
         }else{
@@ -103,10 +104,6 @@ const addrecipe = ({navigation,route}) =>{
         }
     }
 
-
-    const handleDelete = ()=>{
-        deleteRecipe(recipeInfo);
-    }
 
     function showAlert(){
         Alert.alert(
@@ -120,6 +117,7 @@ const addrecipe = ({navigation,route}) =>{
     }
 
     const handleUpload = async() =>{
+        console.log('entro');
         if(recipeInfo == undefined){
             let date = new Date();
             let rid = 'recp' + date.getTime();
@@ -133,6 +131,7 @@ const addrecipe = ({navigation,route}) =>{
             }
             uploadRecipe(image,recipe,true);
         }else{
+            console.log('actualizar');
             if(recipeInfo.imagen != image){
                 const recipe = {
                     id:recipeInfo.id,
@@ -232,14 +231,68 @@ const addrecipe = ({navigation,route}) =>{
             setVariables();
         }
     },[]);
-    function DataScrollView(){
+
+
+    if(loading){
         return(
-        <ScrollView style={styles.container}
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+            </View>
+        ) 
+    }
+
+    if(recipesState.uploading){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+                <Text h4>Uploading...</Text> 
+            </View>
+        ) 
+    }
+
+    if(recipesState.deleting){
+        return(
+            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+                <ActivityIndicator size="large" color="#fabd05" />
+                <Text h4>Deleting...</Text> 
+            </View>
+        ) 
+    }
+
+    return(
+        <View style={{flex:1}}>
+            {/* Header */}
+            <StatusBar backgroundColor="#fabd05"/>
+            <View style={{height:90,alignItems:"flex-end",flexDirection:"row",backgroundColor:"#fabd05",
+            justifyContent:"space-between",paddingHorizontal:24,paddingBottom:10}}>
+            <TouchableOpacity style={{
+                    alignItems:'center',
+                    justifyContent:'center',
+                    height:35,
+                    width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'
+                }} onPress={()=>{navigation.goBack()}}>
+                    <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
+                </TouchableOpacity>
+                 
+                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
+                    borderRadius:18,
+                    borderWidth:1,
+                    borderColor:"#F5F6FB",
+                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
+                    onPress={handleVerify}>
+                        <Icon name="cloud-upload" size={22} color="#F5F6FB" style={{marginLeft:0}}/>
+                    </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.container}
             scrollEventThrottle={16}
             onScroll={(e)=>{
                 scrollY.setValue(e.nativeEvent.contentOffset.y)
             }}
-        >   
+            >   
             <View style={{height:300,backgroundColor:"#fabd05",alignItems:"center",justifyContent:"center"}}>
                 {image ? <Image resizeMode="cover" style={{height:300,width:"100%",opacity:0.7}} source={{uri:image}}/> :null}
                 <View style={{flexDirection:"row",position:"absolute"}}>
@@ -354,117 +407,6 @@ const addrecipe = ({navigation,route}) =>{
                 </View>
             </Modal>
         </ScrollView>
-        )
-    }
-    function renderHeaderBar(){
-        return(
-            <View style={{position:'absolute',top:0,left:0,right:0,height:90,flexDirection:'row',alignItems:'flex-end',justifyContent:"space-between",paddingHorizontal:24,paddingBottom:10}}>
-                <Animated.View
-                    style={{position:'absolute',top:0,left:0,right:0,bottom:0,backgroundColor:"#fabd05",
-                            opacity:scrollY.interpolate({
-                                inputRange:[0,90],
-                                outputRange:[0,-90]
-                            })}}
-                />
-                <TouchableOpacity style={{
-                    alignItems:'center',
-                    justifyContent:'center',
-                    height:35,
-                    width:35,
-                    borderRadius:18,
-                    borderWidth:1,
-                    borderColor:"#F5F6FB",
-                    backgroundColor:'rgba(2, 2, 2, 0.5)'
-                }} onPress={()=>{navigation.goBack()}}>
-                    <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
-                </TouchableOpacity>
-                 
-                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
-                    borderRadius:18,
-                    borderWidth:1,
-                    borderColor:"#F5F6FB",
-                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
-                    onPress={()=>{handleVerify}}>
-                        <Icon name="cloud-upload" size={24} color="#F5F6FB" style={{marginLeft:3}}/>
-                    </TouchableOpacity>
-                
-                
-            </View>
-        )
-    }
-    function header(){
-        return(
-            <View style={{flexDirection:"row",backgroundColor:"#fabd05",marginTop:StatusBar.currentHeight}}>
-                <View style={{alignItems:'center',justifyContent:'center',height:50,width:50,borderRadius:5}}>
-                <TouchableOpacity style={{height:50,width:50,borderRadius:5,marginLeft:10}} onPress={()=> navigation.goBack()}>
-                    <Ionicons name="ios-arrow-back" size={35} color="white"/>
-                </TouchableOpacity>
-                </View>
-                <View style={{flex:1,justifyContent:'center'}}/>
-                <View style={{alignItems:'flex-end',justifyContent:'center',marginRight:10,marginTop:5}}>
-                    <TouchableOpacity style={{height:50,width:50,borderRadius:5}} onPress={handleVerify}>
-                        <Icon name="cloud-upload" size={35} color="white"/> 
-                    </TouchableOpacity> 
-                </View>
-            </View>
-        )
-    }
-
-    if(loading){
-        return(
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-                <ActivityIndicator size="large" color="#fabd05" />
-            </View>
-        ) 
-    }
-
-    if(recipesState.uploading){
-        return(
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-                <ActivityIndicator size="large" color="#fabd05" />
-                <Text h4>Uploading...</Text> 
-            </View>
-        ) 
-    }
-
-    if(recipesState.deleting){
-        return(
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-                <ActivityIndicator size="large" color="#fabd05" />
-                <Text h4>Deleting...</Text> 
-            </View>
-        ) 
-    }
-
-    return(
-        <View style={{flex:1}}>
-            {/* Header */}
-            <StatusBar backgroundColor="#fabd05"/>
-            <View style={{height:90,alignItems:"flex-end",flexDirection:"row",backgroundColor:"#fabd05",
-            justifyContent:"space-between",paddingHorizontal:24,paddingBottom:10}}>
-            <TouchableOpacity style={{
-                    alignItems:'center',
-                    justifyContent:'center',
-                    height:35,
-                    width:35,
-                    borderRadius:18,
-                    borderWidth:1,
-                    borderColor:"#F5F6FB",
-                    backgroundColor:'rgba(2, 2, 2, 0.5)'
-                }} onPress={()=>{navigation.goBack()}}>
-                    <Icon name="angle-left" size={30} color="#F5F6FB" style={{marginRight:2}}/>
-                </TouchableOpacity>
-                 
-                    <TouchableOpacity style={{alignItems:'center',justifyContent:'center',height:35,width:35,
-                    borderRadius:18,
-                    borderWidth:1,
-                    borderColor:"#F5F6FB",
-                    backgroundColor:'rgba(2, 2, 2, 0.5)'}}
-                    onPress={()=>{handleVerify}}>
-                        <Icon name="cloud-upload" size={24} color="#F5F6FB" style={{marginLeft:3}}/>
-                    </TouchableOpacity>
-            </View>
-            <DataScrollView/>
         </View>
         
     )

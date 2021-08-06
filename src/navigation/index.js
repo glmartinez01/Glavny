@@ -2,9 +2,9 @@ import React,{useEffect,useContext} from "react";
 import homeScreen from "../screens/homeScreen";
 import recipeScreen from "../screens/recipeScreen";
 import fbaseRecipeScreen from "../screens/fbaseRecipeScreen";
-import userRecipesScreen from "../screens/sinusar/usersRecipesScreen";
+import userRecipesScreen from "../screens/usersRecipesScreen";
 import myRecipesScreen from "../screens/myRecipesScreen";
-import addRecipeScreen from "../screens/addRecipesScreen";
+import searchScreen from "../screens/searchScreen";
 import addrecipe from "../screens/add2";
 import recipeInstructionsScreen from "../screens/recipeInstructionsScreen";
 import loginScreen from "../screens/loginScreen";
@@ -52,19 +52,21 @@ function myRecipesStack(){
   )
 }
 
-// function otroStack(){
-//   <Stack.Navigator>
-//     <Stack.Screen name="homeStack" component={HomeStack}/>
-    
-//     <Stack.Screen name="recipeStack" component={myRecipesStack}/>
-//   </Stack.Navigator>
-// }
+function searchStack(){
+  return(
+    <Stack.Navigator>
+    <Stack.Screen name="search" component={searchScreen} options={{headerShown:false}}/>
+    </Stack.Navigator>
+  )
+  
+}
   
 function MyTabs(){
     return(  
         
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeStack} options={{tabBarIcon:({color,size})=>(<Ionicons name="home-sharp" size={size} color={color} />)}} />
+            <Tab.Screen name="Search" component={searchStack} options={{tabBarIcon:({color,size})=>(<Ionicons name="search" size={size} color={color} />)}} />
             <Tab.Screen name="Mis Recetas" component={myRecipesStack} options={{tabBarIcon:({color,size})=>(<Ionicons name="book-outline" size={size} color={color} />)}} />
         </Tab.Navigator>
         

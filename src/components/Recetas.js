@@ -12,8 +12,9 @@ const Recetas = ({title, image, accion, backgroundClr }) => {
     <TouchableOpacity onPress={accion}>
       <View style={[styles.caja,backgroundClr?{backgroundColor:backgroundClr}:null]}>
         <Image style={ styles.img} source={image}/>
-   
-          <Text style={styles.texto} numberOfLines={1}>{title}</Text>
+          
+          <Text style={styles.texto}>{title}</Text>
+          
         
       </View>
     </TouchableOpacity>
@@ -32,13 +33,13 @@ const styles = StyleSheet.create({
   texto:{
     backgroundColor:'rgba(0,0,0,0.7)',
     height:height*0.5,
-    width:width,
+    width:width*0.5,
     color:'#fff',
     padding: width*0.02,
     paddingTop:height*0.01,
     fontSize:width*0.04,
     position: "absolute",
-    top: '70%'
+    top: '60%'
   },
   img:{
     width: "100%",

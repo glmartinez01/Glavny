@@ -17,6 +17,7 @@ const homeScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
     const [urecipes,setURecipes] = useState(null);
+    const [refreshing,setRefreshing] = useState(false);
     const { state, signout } = useContext(AuthContext);
     const {recipesState,getRecipes,dispatch} = useContext(RecipeContext);
 
@@ -54,6 +55,12 @@ const homeScreen = ({navigation}) =>{
         }
     },[recipesState])
 
+    const onRefresh=()=>{
+        setRefreshing(true);
+        newGet();
+        setRefreshing(false);
+    }
+
     if(!recipes || !urecipes){
         return(
             <View style={styles.container}>
@@ -70,7 +77,8 @@ const homeScreen = ({navigation}) =>{
             centerComponent={{ text: 'Glavny', style: { color: '#fff',fontWeight:'bold',fontSize:20 } }}
             rightComponent={<Icon name="sign-out" size={30} color="white" onPress={()=>{signout()}} />}
             />
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} 
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
                 <View style={styles.section}>
                     <Text h4 style={{marginLeft:width*0.03}}>Hola, {state.user.name} Deberias Probar...</Text>
                     <Carousel data={recipes} navigation={navigation}/>
