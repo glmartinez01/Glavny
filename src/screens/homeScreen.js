@@ -9,6 +9,8 @@ import {backend} from "../api/backend";
 import Carousel from '../components/Carousel';
 import Box from '../components/Box';
 import { Context as AuthContext } from "../context/AuthContext";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
 
 const {apiKeyS} = getEnvVars();
 const { width, height } = Dimensions.get('window')
@@ -16,6 +18,7 @@ const { width, height } = Dimensions.get('window')
 const homeScreen = ({navigation}) =>{
 
     const [recipes,setRecipes] = useState(null);
+    const [fontLoaded, setFontLoaded] = useState(false);
     const [urecipes,setURecipes] = useState(null);
     const [refreshing,setRefreshing] = useState(false);
     const { state, signout } = useContext(AuthContext);
@@ -39,6 +42,11 @@ const homeScreen = ({navigation}) =>{
         //console.log(newrecipes);
         setURecipes(newrecipes);
     }
+    const loadFonts = () => {
+        return Font.loadAsync({
+            "oregano-regular":require("../../assets/fonts/Oregano-Regular.ttf")
+        });
+    }
 
     useEffect(()=>{
         fetchRecipes();
@@ -61,6 +69,16 @@ const homeScreen = ({navigation}) =>{
         setRefreshing(false);
     }
 
+    if(!fontLoaded){    
+        return (
+            <AppLoading
+            startAsync={loadFonts}
+            onFinish={() => setFontLoaded(true)}
+            onError={(err) => console.log(err)}
+            />
+        );
+    }
+
     if(!recipes || !urecipes){
         return(
             <View style={styles.container}>
@@ -70,17 +88,18 @@ const homeScreen = ({navigation}) =>{
     }
 
     return(
-        <View style={styles.container}>
+        <View style={[styles.container]}>
             <Header
+            
             statusBarProps={{backgroundColor:"#fabd05"}}
             containerStyle={{backgroundColor:"#fabd05"}}
-            centerComponent={{ text: 'Glavny', style: { color: '#fff',fontWeight:'bold',fontSize:20 } }}
+            centerComponent={<Text style={{color:"white",fontFamily:"oregano-regular",fontSize:30}}>Recipenetic</Text>}
             rightComponent={<Icon name="sign-out" size={30} color="white" onPress={()=>{signout()}} />}
             />
             <ScrollView showsVerticalScrollIndicator={false} 
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
                 <View style={styles.section}>
-                    <Text h4 style={{marginLeft:width*0.03}}>Hola, {state.user.name} Deberias Probar...</Text>
+                    <Text h4 style={{marginLeft:width*0.03}}>Hola, {state.user.short} Deberias Probar...</Text>
                     <Carousel data={recipes} navigation={navigation}/>
                 </View>
                 <View style={[styles.section]}>
@@ -109,7 +128,8 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         alignItems:"center",
-        justifyContent:"center"
+        justifyContent:"center",
+        marginTop:10
     },
     section:{
        marginTop:height*0.02

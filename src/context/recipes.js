@@ -44,6 +44,30 @@ const getRecipesbyId = (dispatch) => async(id) =>{
   return recipesList;
 }
 
+const getRecipesbyTitle = (dispatch) => async(titulo) =>{
+  const recipesList = [];
+  const recipes = await firebase.firestore().collection("recetas").orderBy('titulo').startAt(titulo).endAt(titulo+'\uf8ff').limit(20).get();
+
+  recipes.forEach((doc)=>{
+    const recpItem = doc.data();
+    recipesList.push(recpItem);
+  })
+
+  return recipesList;
+}
+
+const getRecipesbyCategory = (dispatch) => async(categoria) =>{
+  const recipesList = [];
+  const recipes = await firebase.firestore().collection("recetas").where("categoria","==",categoria).limit(20).get();
+
+  recipes.forEach((doc)=>{
+    const recpItem = doc.data();
+    recipesList.push(recpItem);
+  })
+
+  return recipesList;
+}
+
 const deleteRecipe =(dispatch)=>(recipe)=> {
   dispatch({type:"deleting",payload:true});
   firebase.firestore()
@@ -160,6 +184,8 @@ export const { Provider, Context } = recipeDataContext(
     uploadRecipe,
     getRecipes,
     getRecipesbyId,
+    getRecipesbyTitle,
+    getRecipesbyCategory,
     deleteRecipe
   },
   {

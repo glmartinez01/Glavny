@@ -10,7 +10,8 @@ import {Context as AuthContext} from "../context/AuthContext";
 import { ActivityIndicator } from "react-native";
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
-import { CommonActions } from '@react-navigation/native';
+import {Picker} from '@react-native-picker/picker';
+
 
 const {width, height} = Dimensions.get("window")
 
@@ -30,6 +31,8 @@ const addrecipe = ({navigation,route}) =>{
     const [quantity,setQuantity] = useState("")
     const [ingredient,setIngredient] = useState("");
     const [instruction,setInstruction] = useState("");
+    const [categoria,setCategoria] = useState("");
+    const [remaining,setRemaining] = useState(25);
     const [open,setOpen] = useState(false);
     const [open2,setOpen2] = useState(false);
     const [image,setImage] = useState("");
@@ -40,6 +43,29 @@ const addrecipe = ({navigation,route}) =>{
 
     const {state} = useContext(AuthContext);
     const {recipesState,setUpload,setDelete,uploadRecipe,deleteRecipe} = useContext(RecipeContext);
+
+    const categories = [
+        {label:"Elegir una categoria",value:""},
+        {label:"Desayuno",value:"Desayuno"},
+        {label:"Bebidas",value:"Bebidas"},
+        {label:"Ensaladas y Vegetales",value:"Ensaladas"},
+        {label:"Salsas y Aderezos",value:"Salsas"},
+        {label:"Sopas y Caldos",value:"Sopas"},
+        {label:"Arroz y legumbres",value:"Arroz"},
+        {label:"Appetizer",value:"Appetizer"},
+        {label:"Acompañamiento",value:"Acompañamiento"},
+        {label:"Entradas",value:"Entradas"},
+        {label:"Postres",value:"Postres"},
+        {label:"Mariscos",value:"Mariscos"},
+        {label:"Aves y Carnes",value:"Carnes"},
+        {label:"Pasta",value:"Pasta"},
+        {label:"Snacks",value:"Snacks"},
+        {label:"Fitness",value:"Fitness"},
+        {label:"Asiatica",value:"Asiatica"},
+        {label:"Italiana",value:"Italiana"},
+        {label:"Panes y Masas",value:"Panes"},
+        {label:"Otros",value:"Otros"},
+    ]
 
     useEffect(()=>{
         if(recipesState.uploaded){
@@ -96,9 +122,8 @@ const addrecipe = ({navigation,route}) =>{
     }
 
     const handleVerify=()=>{
-        console.log('entro al verify');
-        if(arrayinstructions.length<1 || arrayingredients.length<1 || image == "" || titulo == ""){
-            alert("Favor ingrese todos los datos necesarios: Foto de la Receta, Titulo, Instrucciones e Ingredientes");
+        if(arrayinstructions.length<1 || arrayingredients.length<1 || image == "" || titulo == "" || categoria == ""){
+            alert("Favor ingrese todos los datos necesarios: Foto de la Receta, Titulo, Categoria, Instrucciones e Ingredientes");
         }else{
             handleUpload();
         }
@@ -117,7 +142,6 @@ const addrecipe = ({navigation,route}) =>{
     }
 
     const handleUpload = async() =>{
-        console.log('entro');
         if(recipeInfo == undefined){
             let date = new Date();
             let rid = 'recp' + date.getTime();
@@ -127,7 +151,8 @@ const addrecipe = ({navigation,route}) =>{
                 titulo:titulo,
                 ingredientes:arrayingredients,
                 instrucciones:arrayinstructions,
-                userID:id
+                userID:id,
+                categoria:categoria
             }
             uploadRecipe(image,recipe,true);
         }else{
@@ -140,6 +165,7 @@ const addrecipe = ({navigation,route}) =>{
                     ingredientes:arrayingredients,
                     instrucciones:arrayinstructions,
                     userID:recipeInfo.userID,
+                    categoria:categoria
                 }
                 uploadRecipe(image,recipe,true);
             }else{
@@ -150,6 +176,7 @@ const addrecipe = ({navigation,route}) =>{
                     ingredientes:arrayingredients,
                     instrucciones:arrayinstructions,
                     userID:recipeInfo.userID,
+                    categoria:categoria,
                     imagen:recipeInfo.imagen,
                 }
                 uploadRecipe(image,recipe,false);
@@ -185,45 +212,55 @@ const addrecipe = ({navigation,route}) =>{
     };
 
     const addIngredient = ()=> {
-        let lastid = 0
-        for( var i = 0; i < arrayingredients.length; i++){ 
-            lastid = arrayingredients[i].id;
-        }
-        
-        const item = {
-            id:lastid+1,
-            name:ingredient,
-            quantity:quantity
-        };
-        arrayingredients.push(item);
+        if(ingredient && quantity){
+            let lastid = 0
+            for( var i = 0; i < arrayingredients.length; i++){ 
+                lastid = arrayingredients[i].id;
+            }
+            
+            const item = {
+                id:lastid+1,
+                name:ingredient,
+                quantity:quantity
+            };
+            arrayingredients.push(item);
 
-        // setIngredients(arrayingredients);
-       // console.log(arrayingredients);
-        setOpen(false);
+            setOpen(false);
+        }
     };
 
     const addInstruction = ()=> {
-        let lastid = 0;
-        for( var i = 0; i < arrayinstructions.length; i++){ 
-            lastid = arrayinstructions[i].id;
-        }
-        
-        const item = {
-            id:lastid+1,
-            step:instruction,
-        };
-        arrayinstructions.push(item);
+        if(instruction){
+            let lastid = 0;
+            for( var i = 0; i < arrayinstructions.length; i++){ 
+                lastid = arrayinstructions[i].id;
+            }
+            
+            const item = {
+                id:lastid+1,
+                step:instruction,
+            };
+            arrayinstructions.push(item);
 
-        setOpen2(false);
+            setOpen2(false);
+        } 
     };
 
     const setVariables = ()=>{
         setArrayInstructions(recipeInfo.instrucciones);
         setArrayIngredients(recipeInfo.ingredientes);
         setTitulo(recipeInfo.titulo);
+        setCategoria(recipeInfo.categoria);
         setImage(recipeInfo.imagen);
         setLoading(false);
     };
+
+    const handleRemaining = ()=>{
+        
+        let currentremain = 25;
+        currentremain = currentremain - titulo.length;
+        setRemaining(currentremain);
+    }
 
     useEffect(()=>{
         if(recipeInfo!=undefined){
@@ -231,6 +268,14 @@ const addrecipe = ({navigation,route}) =>{
             setVariables();
         }
     },[]);
+
+    useEffect(()=>{
+        handleRemaining();
+    },[titulo]);
+
+    useEffect(()=>{
+        console.log(categoria);
+    },[categoria]);
 
 
     if(loading){
@@ -245,7 +290,7 @@ const addrecipe = ({navigation,route}) =>{
         return(
             <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
                 <ActivityIndicator size="large" color="#fabd05" />
-                <Text h4>Uploading...</Text> 
+                <Text h4>Publicando...</Text> 
             </View>
         ) 
     }
@@ -254,7 +299,7 @@ const addrecipe = ({navigation,route}) =>{
         return(
             <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
                 <ActivityIndicator size="large" color="#fabd05" />
-                <Text h4>Deleting...</Text> 
+                <Text h4>Borrando...</Text> 
             </View>
         ) 
     }
@@ -303,11 +348,12 @@ const addrecipe = ({navigation,route}) =>{
             </View>
             {/* <Ionicons name="arrow-back" size={width*0.09} color="white" onPress={() => {navigation.pop()}} style={{position:"absolute", left:'3%', top:'5%'}}/> */}
             {/* Overview */}
-            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>OVERVIEW</Text>
+            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>RESUMEN</Text>
             <View style={styles.section}>
                 <View style={styles.card}>
                     <View style={{flex:1,justifyContent:'center'}}>
                         <TextInput
+                            maxLength={25}
                             onChangeText={setTitulo}
                             value={titulo}
                             placeholderTextColor="#aaa"
@@ -316,11 +362,27 @@ const addrecipe = ({navigation,route}) =>{
                         />
                     </View>
                     <View style={{alignItems:'flex-end',justifyContent:'center'}}>
-                        <Text style={{fontSize:14,fontStyle:'italic',color:"#aaa"}}>Requerido</Text> 
+                        <Text style={{fontSize:14,fontStyle:'italic',color:"#aaa"}}>{remaining} caracteres</Text> 
                     </View>
                 </View>
             </View>
-            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>INGREDIENTS</Text>
+            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>CATEGORIA</Text>
+            <View style={styles.section}>
+                <View style={{alignItems:"center",borderColor:"#CDCBD0",borderWidth:0.5,backgroundColor:"#fff"}} >
+                    <Picker
+                    enabled={recipeInfo?.categoria ? false : true}
+                    style={{width:"95%",color:recipeInfo?.categoria?"#aaa":"#000"}}
+                    selectedValue={categoria}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setCategoria(itemValue)
+                    }>
+                    {categories.map((element,key)=>(
+                         <Picker.Item key={key} label={element.label} value={element.value}/>
+                    ))}                    
+                    </Picker>
+                </View>
+            </View>
+            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>INGREDIENTES</Text>
             <View style={styles.section}>
                 {arrayingredients.map((element,key)=>(
                         <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeIngredient(element)}} renderRightActions={RenderRight} key={key}>
@@ -347,7 +409,7 @@ const addrecipe = ({navigation,route}) =>{
                     </View>
                 </TouchableOpacity>
             </View>
-            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>INSTRUCTIONS - STEPS</Text>
+            <Text style={{paddingHorizontal:15,marginTop:10,color:"#8F8F8F"}}>INSTRUCCIONES - PASOS</Text>
             <View style={styles.section}>
                 {arrayinstructions.map((element,key)=>(
                         <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeInstruction(element)}} renderRightActions={RenderRight} key={key}>

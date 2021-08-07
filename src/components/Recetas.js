@@ -27,8 +27,20 @@ const styles = StyleSheet.create({
     height: width*0.4,
     width: width*0.4,
     margin:0,
+    borderRadius:5,
     overflow: "hidden",
-    position: 'relative'
+    position: 'relative',
+    shadowColor: "#000",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+
   },
   texto:{
     backgroundColor:'rgba(0,0,0,0.7)',
@@ -39,7 +51,7 @@ const styles = StyleSheet.create({
     paddingTop:height*0.01,
     fontSize:width*0.04,
     position: "absolute",
-    top: '60%'
+    top: '65%'
   },
   img:{
     width: "100%",

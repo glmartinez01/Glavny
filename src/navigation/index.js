@@ -88,6 +88,7 @@ function finalStack(){
         name="recipeinstructions"
         component={recipeInstructionsScreen}
         options={{headerShown:false}}/>
+      <Stack.Screen name="category" component={userRecipesScreen} options={{headerShown:false}}/>
     </Stack.Navigator>
   )
 }

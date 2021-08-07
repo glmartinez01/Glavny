@@ -195,6 +195,7 @@ const signup = (dispatch) => (name, email, password) => {
         id: uid,
         email,
         name,
+        short:name.split(' ')[0]
       };
 
       // Obtener la colección desde Firebase

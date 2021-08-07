@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Glavny",
-    "slug": "Glavny",
+    "name": "Recipenetic",
+    "slug": "Recipenetic",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fabd05"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,9 +22,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#fabd05"
       },
-      "package": "com.glmartinez01.Glavny"
+      "package": "com.glmartinez01.Recipenetic"
     },
     "web": {
       "favicon": "./assets/favicon.png"
