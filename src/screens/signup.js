@@ -5,6 +5,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { validate } from "email-validator";
 import Alert from "../components/Alert";
 import { Context as AuthContext } from "../context/AuthContext";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
 
 const {width, height} = Dimensions.get("window");
 
@@ -22,6 +24,13 @@ const Signup = ({ navigation }) => {
   const [hidePass1, setHidePass1] = useState(true);
   const [hidePass2, setHidePass2] = useState(true);
   const [error, setError] = useState("");
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  const loadFonts = () => {
+    return Font.loadAsync({
+        "oregano-regular":require("../../assets/fonts/Oregano-Regular.ttf")
+    });
+}
 
   useEffect(() => {
     if (state.errorMessage) clearErrorMessage();
@@ -67,10 +76,20 @@ const Signup = ({ navigation }) => {
     }
   };
 
+  if(!fontLoaded){    
+    return (
+        <AppLoading
+        startAsync={loadFonts}
+        onFinish={() => setFontLoaded(true)}
+        onError={(err) => console.log(err)}
+        />
+    );
+}
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Glavny</Text>
+      <Text style={styles.logo}>Recipetacular</Text>
       {error ? <Alert type="error" title={error} /> : null}
       <TextInput
         placeholder="Nombre"
@@ -169,8 +188,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo:{
-    fontWeight:"bold",
-    fontSize:width*0.075,
+    fontFamily:"oregano-regular",
+    fontSize:width*0.09,
     color:"white",
     marginBottom:height*0.03
   },

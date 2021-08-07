@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Recipenetic",
-    "slug": "Recipenetic",
+    "name": "Recipetacular",
+    "slug": "Recipetacular",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fabd05"
       },
-      "package": "com.glmartinez01.Recipenetic"
+      "package": "com.glmartinez01.Recipetacular"
     },
     "web": {
       "favicon": "./assets/favicon.png"

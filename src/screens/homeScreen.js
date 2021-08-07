@@ -93,7 +93,7 @@ const homeScreen = ({navigation}) =>{
             
             statusBarProps={{backgroundColor:"#fabd05"}}
             containerStyle={{backgroundColor:"#fabd05"}}
-            centerComponent={<Text style={{color:"white",fontFamily:"oregano-regular",fontSize:30}}>Recipenetic</Text>}
+            centerComponent={<Text style={{color:"white",fontFamily:"oregano-regular",fontSize:30}}>Recipetacular</Text>}
             rightComponent={<Icon name="sign-out" size={30} color="white" onPress={()=>{signout()}} />}
             />
             <ScrollView showsVerticalScrollIndicator={false} 

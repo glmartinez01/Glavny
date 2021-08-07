@@ -17,7 +17,7 @@ const {width, height} = Dimensions.get("window")
 
 const RenderRight = (progress,dragX) =>{
     return(
-        <View style={{flexDirection:"row",height:50,width:"30%",backgroundColor:"#EA4235",alignItems:"center",justifyContent:"center"}}>
+        <View style={{flexDirection:"row",height:"auto",width:"30%",backgroundColor:"#EA4235",alignItems:"center",justifyContent:"center"}}>
             <Text style={{color:"#fff",fontWeight:"600"}}>Borrar </Text>
             <Icon name="trash" color="#fff" size={15}/>
         </View>
@@ -413,7 +413,7 @@ const addrecipe = ({navigation,route}) =>{
             <View style={styles.section}>
                 {arrayinstructions.map((element,key)=>(
                         <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeInstruction(element)}} renderRightActions={RenderRight} key={key}>
-                            <View style={styles.card} >
+                            <View style={[styles.card,{height:"auto"}]} >
                                 <View style={{alignItems:'center',justifyContent:'center',height:30,width:30,borderRadius:50,backgroundColor:"#fabd05"}}>
                                     <Text style={{fontSize:16,color:"white"}}>{element.id}</Text>
                                 </View>
@@ -458,12 +458,26 @@ const addrecipe = ({navigation,route}) =>{
             </Modal>
             <Modal animationType="fade" transparent={true} visible={open2}>
                 <View style={{backgroundColor:"#000000aa", flex:1, justifyContent:"center", alignItems:"center"}}>
-                    <View style={{backgroundColor:"#fff", height:300, width:'90%', borderRadius:10}}>
+                    <View style={{backgroundColor:"rgba(242,242,242,1)", height:300, width:'90%', borderRadius:10}}>
                         <Icon name="chevron-left" size={25} color="black" style={{position:'absolute', zIndex:2,margin:5,padding:15}} onPress={()=>setOpen2(false)} />
                         <Icon name="plus" size={25} style={{position:'absolute', zIndex:2,marginLeft:'82%', margin:5,padding:15}} onPress={addInstruction} color="black" />
                         <Text style={{alignSelf:"center", fontSize:20, marginTop:20}}>Agregar Instruccion</Text>
-                        <View style={{backgroundColor:'#fff',height:height*0.2,marginHorizontal:10,marginVertical:20,flex:1,justifyContent:"center",alignItems:"center"}}>
-                            <TextInput multiline placeholder="Escriba detalladamente..." onChangeText={setInstruction} placeholderTextColor={'rgba(0,0,0,0.5)'} style={{width:"70%",color:'#000',height:height*0.25,borderWidth:1,borderColor:"#CDCBD0",padding:5}}/>
+                        <View style={{flex: 1,height:height*0.2,marginHorizontal:10,marginVertical:20,flex:1,justifyContent:"center",alignItems:"center",
+                                        margin: 10,
+                                        backgroundColor:"rgba(242,242,242,1)",
+                                        }}>
+                            <TextInput multiline placeholder="Escriba detalladamente..." onChangeText={setInstruction} placeholderTextColor={'rgba(0,0,0,0.5)'} 
+                                        style={{width:"90%",color:'#000',height:height*0.15,padding:5,
+                                                backgroundColor: '#fff',
+                                                shadowColor: "#000",
+                                                shadowOffset: {
+                                                    width: 0,
+                                                    height: 2,
+                                                },
+                                                shadowOpacity: 0.25,
+                                                shadowRadius: 3.84,
+                                                elevation: 5
+                                        }}/>
                         </View>
                     </View>
                 </View>

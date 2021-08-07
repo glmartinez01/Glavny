@@ -234,7 +234,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
     marginLeft: width*0.027,
-    marginRight: width*0.25
   },
   button4: {
     borderRadius:20,
