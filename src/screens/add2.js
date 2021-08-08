@@ -413,7 +413,7 @@ const addrecipe = ({navigation,route}) =>{
             <View style={styles.section}>
                 {arrayinstructions.map((element,key)=>(
                         <Swipeable overshootRight={false} onSwipeableRightOpen={()=>{removeInstruction(element)}} renderRightActions={RenderRight} key={key}>
-                            <View style={[styles.card,{height:"auto"}]} >
+                            <View style={[styles.card,{height:"auto",minHeight:50}]} >
                                 <View style={{alignItems:'center',justifyContent:'center',height:30,width:30,borderRadius:50,backgroundColor:"#fabd05"}}>
                                     <Text style={{fontSize:16,color:"white"}}>{element.id}</Text>
                                 </View>
